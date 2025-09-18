@@ -11,6 +11,7 @@ import { ErrorSummary } from '@/components/application/ErrorSummary';
 import { useToast } from '@/hooks/use-toast';
 import Layout from '@/components/layout/Layout';
 import { Separator } from '@/components/ui/separator';
+import { MATRIX_CATEGORIES, EXPERTISE_AREAS, MEETING_PREFERENCES } from '@/data/applicationData';
 
 // Import step components
 import { MentorStep1 } from './steps/mentor/MentorStep1';
@@ -192,6 +193,102 @@ export const MentorApplication: React.FC = () => {
     }
   };
 
+  const handleAutofillStep = (stepIndex: number) => {
+    const dummyFileItem = (name: string, type: string) => ({
+      id: Math.random().toString(36).slice(2),
+      file: new File(["Test content"], name, { type }),
+      progress: 100,
+      status: 'completed' as const,
+      url: ''
+    });
+
+    switch (stepIndex) {
+      case 0: {
+        form.setValue('person', {
+          firstName: 'Mary',
+          lastName: 'Mentor',
+          email: 'mary.mentor@example.com',
+          title: 'Executive Advisor'
+        });
+        form.setValue('company', {
+          name: 'MentorCo',
+          industry: ['Professional Services'],
+          website: 'https://mentor.co'
+        });
+        form.setValue('phones', { business: '9135550000', mobile: '9135551111' });
+        form.setValue('address', {
+          business: { street1: '500 Market St', street2: '', city: 'Overland Park', state: 'KS', postalCode: '66210', country: 'USA' }
+        });
+        form.setValue('referral', { source: 'Alumni' });
+        break;
+      }
+      case 1: {
+        form.setValue('background', { yearsInLeadershipOrOwnership: 15 });
+        form.setValue('team', { fullTime: 20, partTime: 5, contractors: 3, total: 28 });
+        form.setValue('company', { ...(form.getValues('company') || {}), type: 'LLC', typeOther: '', experienceNotes: 'Autofilled.' });
+        break;
+      }
+      case 2: {
+        form.setValue('preferences', {
+          expertiseAreas: EXPERTISE_AREAS.slice(0, 3),
+          availabilityHoursPerMonth: 6,
+          meetingPreference: MEETING_PREFERENCES[2],
+          capacityMentees: 2,
+          geography: 'KC Metro',
+          notes: 'Open to remote sessions.'
+        });
+        break;
+      }
+      case 3: {
+        const matrix: Record<string, string> = {};
+        MATRIX_CATEGORIES.forEach((c) => { matrix[c.id] = 'S'; });
+        form.setValue('strengths', { matrix });
+        form.setValue('narratives', {
+          biggestSuccess: 'Helped scale a startup to national presence with strong revenue growth. '.repeat(5),
+          mistakes: [
+            { whatHappened: 'Delegated too little early on leading to bottlenecks.'.repeat(2), lesson: 'Empowered team leads and established clear processes.'.repeat(2) },
+            { whatHappened: 'Expanded to a new market without sufficient research.'.repeat(2), lesson: 'Now validate with pilots and customer discovery.'.repeat(2) },
+            { whatHappened: 'Hired for skill without culture fit.'.repeat(2), lesson: 'We created values-based hiring criteria.'.repeat(2) }
+          ],
+          helpAreasAsLeader: 'Seeking to improve mentorship frameworks for early-stage founders. '.repeat(4),
+          whyHEMP: 'Committed to giving back and supporting the next generation of entrepreneurs. '.repeat(4)
+        });
+        break;
+      }
+      case 4: {
+        form.setValue('references', {
+          business: [
+            { name: 'Alan Ref', company: 'Alpha Inc', phone: '9135552000', email: 'alan@alpha.com' },
+            { name: 'Betty Ref', company: 'Beta LLC', phone: '9135553000', email: 'betty@beta.com' },
+            { name: 'Carl Ref', company: 'Gamma Co', phone: '9135554000', email: 'carl@gamma.com' }
+          ]
+        });
+        break;
+      }
+      case 5: {
+        form.setValue('uploads', {
+          bio: [dummyFileItem('bio.pdf', 'application/pdf')],
+          headshot: [dummyFileItem('mentor-headshot.jpg', 'image/jpeg')],
+          additionalDocs: [dummyFileItem('portfolio.pdf', 'application/pdf')]
+        });
+        break;
+      }
+      case 6: {
+        form.setValue('signature', {
+          typedName: 'Mary Mentor',
+          consent: true,
+          drawn: '',
+          method: 'typed',
+          timestamp: new Date().toISOString(),
+          ip: '127.0.0.1'
+        });
+        break;
+      }
+      default:
+        break;
+    }
+  };
+
   return (
     <Layout>
       <div className="container mx-auto py-8 max-w-4xl">
@@ -207,6 +304,17 @@ export const MentorApplication: React.FC = () => {
             <div className="flex justify-between items-center">
               <CardTitle className="text-xl">Application Progress</CardTitle>
               <AutosaveIndicator status={autosaveStatus} lastSaved={lastSaved} />
+              <div className="flex items-center gap-2">
+                <Button type="button" variant="secondary" onClick={() => handleAutofillStep(currentStep)}>
+                  Autofill This Step
+                </Button>
+                <Button type="button" variant="secondary" onClick={() => { handleAutofillStep(currentStep); if (currentStep < STEPS.length - 1) setCurrentStep(currentStep + 1); }}>
+                  Autofill & Next
+                </Button>
+                <Button type="button" variant="outline" onClick={() => { for (let i = 0; i < 7; i++) handleAutofillStep(i); }}>
+                  Autofill All Steps
+                </Button>
+              </div>
             </div>
           </CardHeader>
           <CardContent>

@@ -11,6 +11,7 @@ import { ErrorSummary } from '@/components/application/ErrorSummary';
 import { useToast } from '@/hooks/use-toast';
 import Layout from '@/components/layout/Layout';
 import { Separator } from '@/components/ui/separator';
+import { MATRIX_CATEGORIES, getCurrentYears } from '@/data/applicationData';
 
 // Import step components
 import { MenteeStep1 } from './steps/mentee/MenteeStep1';
@@ -198,6 +199,167 @@ export const MenteeApplication: React.FC = () => {
     }
   };
 
+  const handleAutofillStep = (stepIndex: number) => {
+    // Utility to create a dummy uploaded file item compatible with FileUploader
+    const dummyFileItem = (name: string, type: string) => ({
+      id: Math.random().toString(36).slice(2),
+      file: new File(["Test content"], name, { type }),
+      progress: 100,
+      status: 'completed' as const,
+      url: ''
+    });
+
+    switch (stepIndex) {
+      case 0: {
+        form.setValue('applicant', {
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'john.doe@example.com',
+          title: 'Founder'
+        });
+        form.setValue('company', {
+          ...(form.getValues('company') || {}),
+          name: 'Acme Widgets',
+          type: 'LLC',
+          industry: ['Information Technology'],
+          website: 'https://example.com',
+          phoneBusiness: '8161234567'
+        });
+        form.setValue('applicant_phoneMobile', '8169876543');
+        form.setValue('referral', { source: 'Web Search' });
+        form.setValue('address', {
+          business: {
+            street1: '123 Main St',
+            street2: '',
+            city: 'Kansas City',
+            state: 'MO',
+            postalCode: '64101',
+            country: 'USA'
+          }
+        });
+        break;
+      }
+      case 1: {
+        form.setValue('company', {
+          ...(form.getValues('company') || {}),
+          yearsInBusiness: 5,
+          fiscalYearEnd: 'december',
+          founderIsApplicant: true,
+          ultimateDecisionMaker: true,
+          ownership: [
+            { name: 'John Doe', title: 'Founder', equityPercent: 80 },
+            { name: 'Jane Smith', title: 'Co-founder', equityPercent: 20 }
+          ]
+        });
+        form.setValue('governance', {
+          hasBoardOfDirectors: true,
+          hasAdvisoryBoard: false,
+          directorsCount: 3
+        });
+        break;
+      }
+      case 2: {
+        form.setValue('team', {
+          fullTime: 5,
+          partTime: 2,
+          contractors: 1,
+          total: 8
+        });
+        break;
+      }
+      case 3: {
+        const years = getCurrentYears();
+        const yearsData: any = {};
+        [years.last2, years.last1, years.currentEst].forEach((y) => {
+          yearsData[y] = {
+            fullTimeEmployees: 3,
+            annualRevenue: 250000 + (y === years.currentEst ? 50000 : 0),
+            revenueGrowthPercent: 20,
+            profitGrowthPercent: 15,
+            equityPercent: 75
+          };
+        });
+        form.setValue('finance', {
+          years: yearsData,
+          wasProfitableLastYear: true,
+          currentlyProfitable: true,
+          largestCustomerSharePercent: 30,
+          takesAnnualSalary: true,
+          contextNotes: 'Autofilled financial snapshot for testing.'
+        });
+        break;
+      }
+      case 4: {
+        const matrix: Record<string, string> = {};
+        MATRIX_CATEGORIES.forEach((c) => { matrix[c.id] = 'S'; });
+        form.setValue('strengths', { matrix });
+        const longText =
+          'This is an autofilled narrative used for testing the form validation. '.repeat(8);
+        const longText2 =
+          'We are seeking mentorship to accelerate growth and improve operations. '.repeat(8);
+        form.setValue('narratives', {
+          biggestSuccess: longText,
+          helpAreas: longText2,
+          extraStrength: 'Team collaboration and innovation.',
+          extraHelp: 'Scaling sales processes.',
+          mistakes: [
+            { whatHappened: 'Made a hiring decision too quickly without due diligence.'.repeat(2), lesson: 'Implemented structured interviews and reference checks.'.repeat(2) },
+            { whatHappened: 'Underestimated project scope leading to delays.'.repeat(2), lesson: 'Now perform detailed planning and risk assessment.'.repeat(2) },
+            { whatHappened: 'Launched without enough user testing.'.repeat(2), lesson: 'We added a beta program and feedback loops.'.repeat(2) }
+          ],
+          whyHEMP: 'HEMP will provide invaluable guidance, accountability, and network access to help us scale responsibly and sustainably. '.repeat(4)
+        });
+        break;
+      }
+      case 5: {
+        form.setValue('references', {
+          accountant: { name: 'Alice Accountant', firm: 'AA CPA', phone: '8165551000', email: 'alice@cpa.com' },
+          attorney: { name: 'Bob Attorney', firm: 'BA Law', phone: '8165552000', email: 'bob@law.com' },
+          bank: { name: 'Carol Banker', bankName: 'KC Bank', phone: '8165553000', email: 'carol@kcbank.com' },
+          business: [
+            { name: 'Dave Biz', company: 'BizCo', phone: '8165554000', email: 'dave@biz.co' },
+            { name: 'Eve Biz', company: 'Enterprises', phone: '8165555000', email: 'eve@enterprises.com' }
+          ],
+          customer: [
+            { name: 'Frank Customer', company: 'CustCorp', phone: '8165556000', email: 'frank@cust.com' },
+            { name: 'Grace Customer', company: 'Grace LLC', phone: '8165557000', email: 'grace@grace.com' }
+          ],
+          supplier: [
+            { name: 'Heidi Supplier', company: 'SupplyCo', phone: '8165558000', email: 'heidi@supply.co' },
+            { name: 'Ivan Supplier', company: 'Widgets Ltd', phone: '8165559000', email: 'ivan@widgets.com' }
+          ]
+        });
+        break;
+      }
+      case 6: {
+        form.setValue('uploads', {
+          coverLetter: [dummyFileItem('cover-letter.pdf', 'application/pdf')],
+          orgChart: [dummyFileItem('org-chart.pdf', 'application/pdf')],
+          personalBioOrResume: [dummyFileItem('resume.pdf', 'application/pdf')],
+          businessDescription: [dummyFileItem('business-description.pdf', 'application/pdf')],
+          releaseGeneral: [dummyFileItem('general-release.pdf', 'application/pdf')],
+          releaseInfoAuthorization: [dummyFileItem('info-authorization.pdf', 'application/pdf')],
+          releaseApplicationInfo: [dummyFileItem('application-release.pdf', 'application/pdf')],
+          headshot: [dummyFileItem('headshot.jpg', 'image/jpeg')]
+        });
+        break;
+      }
+      case 7: {
+        form.setValue('signature', {
+          typedName: 'John Doe',
+          consent: true,
+          drawn: '',
+          method: 'typed',
+          timestamp: new Date().toISOString(),
+          ip: '127.0.0.1'
+        });
+        break;
+      }
+      default:
+        break;
+    }
+  };
+
   return (
     <Layout>
       <div className="container mx-auto py-8 max-w-4xl">
@@ -213,6 +375,17 @@ export const MenteeApplication: React.FC = () => {
             <div className="flex justify-between items-center">
               <CardTitle className="text-xl">Application Progress</CardTitle>
               <AutosaveIndicator status={autosaveStatus} lastSaved={lastSaved} />
+              <div className="flex items-center gap-2">
+                <Button type="button" variant="secondary" onClick={() => handleAutofillStep(currentStep)}>
+                  Autofill This Step
+                </Button>
+                <Button type="button" variant="secondary" onClick={() => { handleAutofillStep(currentStep); if (currentStep < STEPS.length - 1) setCurrentStep(currentStep + 1); }}>
+                  Autofill & Next
+                </Button>
+                <Button type="button" variant="outline" onClick={() => { for (let i = 0; i < 8; i++) handleAutofillStep(i); }}>
+                  Autofill All Steps
+                </Button>
+              </div>
             </div>
           </CardHeader>
           <CardContent>
