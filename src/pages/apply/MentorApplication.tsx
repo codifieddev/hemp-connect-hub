@@ -752,9 +752,9 @@ export const MentorApplication: React.FC = () => {
             <div className="flex justify-between items-center">
               <CardTitle className="text-xl">Application Progress</CardTitle>
               <div className="flex items-center gap-2">
-                <Button type="button" variant="secondary" onClick={autofillThisStep}>Autofill This Step</Button>
-                <Button type="button" variant="secondary" onClick={autofillAndNext}>Autofill & Next</Button>
-                <Button type="button" variant="secondary" onClick={autofillAllSteps}>Autofill All Steps</Button>
+                <Button type="button" variant="secondary" className='border border-primary hover:bg-primary hover:text-white bg-white' onClick={autofillThisStep}>Autofill This Step</Button>
+                <Button type="button" variant="secondary" className='border border-primary hover:bg-primary hover:text-white bg-white' onClick={autofillAndNext}>Autofill & Next</Button>
+                <Button type="button" variant="secondary" className='border border-primary hover:bg-primary hover:text-white bg-white' onClick={autofillAllSteps}>Autofill All Steps</Button>
                 <AutosaveIndicator status={autosaveStatus} lastSaved={lastSaved} />
               </div>
             </div>

@@ -1,12 +1,14 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Users, Filter } from 'lucide-react';
+import { Users, X } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import ParticipantCard from '@/components/participants/ParticipantCard';
 import ParticipantFilters from '@/components/participants/ParticipantFilters';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ParticipantFilters as FilterType } from '@/types/participant';
 import { MOCK_PARTICIPANTS, filterParticipants } from '@/data/mockData';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const Participants = () => {
   const location = useLocation();
@@ -33,20 +35,53 @@ const Participants = () => {
     return filterParticipants(MOCK_PARTICIPANTS, filters);
   }, [filters]);
 
+  // === FUNCTIONS ADDED HERE ===
+  // These functions are now available for the active filter badges
+  const updateFilter = (key: keyof FilterType, value: any) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const toggleArrayFilter = (key: 'industries' | 'expertises', value: string) => {
+    setFilters(prev => {
+      const currentArray = prev[key] || [];
+      const newArray = currentArray.includes(value)
+        ? currentArray.filter(item => item !== value)
+        : [...currentArray, value];
+      return { ...prev, [key]: newArray.length > 0 ? newArray : undefined };
+    });
+  };
+  // ============================
+
   const menteeCount = MOCK_PARTICIPANTS.filter(p => p.role === 'mentee').length;
   const mentorCount = MOCK_PARTICIPANTS.filter(p => p.role === 'mentor').length;
   const fellowCount = MOCK_PARTICIPANTS.filter(p => p.role === 'fellow').length;
   const counselorCount = MOCK_PARTICIPANTS.filter(p => p.role === 'counselor').length;
 
   const handleTabChange = (role: string) => {
-    setFilters(prev => ({ ...prev, role: role as any }));
-    // Update URL without reloading the page
+    // We create a new filter object to reset other filters when tab changes
+    const newFilters: FilterType = {
+        q: '',
+        role: role as any,
+        sort: 'name',
+    };
+    setFilters(newFilters);
+    
     const basePath = '/participants';
     if (role === 'all') {
       navigate(basePath);
     } else {
       navigate(`${basePath}/${role}s`);
     }
+  };
+
+  const getActiveFilterCount = () => {
+    let count = 0;
+    if (filters.q && filters.q.trim() !== '') count++;
+    if (filters.industries?.length) count++;
+    if (filters.expertises?.length) count++;
+    if (filters.location) count++;
+    if (filters.availability !== undefined) count++;
+    return count;
   };
 
   return (
@@ -69,7 +104,7 @@ const Participants = () => {
 
         {/* Tabs for different participant types */}
         <Tabs value={filters.role || 'all'} onValueChange={handleTabChange} className="mb-6">
-          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:grid-cols-5">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:w-auto">
             <TabsTrigger value="all" className="text-xs lg:text-sm">
               All ({MOCK_PARTICIPANTS.length})
             </TabsTrigger>
@@ -89,17 +124,20 @@ const Participants = () => {
         </Tabs>
 
         <div className="flex flex-col lg:flex-row gap-6">
-          {/* Filters Sidebar */}
-          <ParticipantFilters
-            filters={filters}
-            onFiltersChange={setFilters}
-            showRoleFilter={false}
-          />
+          
+          {/* Filters Sidebar (Desktop) */}
+          <div className="hidden lg:block">
+            <ParticipantFilters
+              filters={filters}
+              onFiltersChange={setFilters}
+              showRoleFilter={false} // Tabs are controlling the role
+            />
+          </div>
 
           {/* Main Content */}
           <div className="flex-1">
             {/* Mobile Filters and Results Count */}
-            <div className="lg:hidden mb-6 flex items-center justify-between">
+            <div className="lg:hidden mb-4 flex items-center justify-between">
               <ParticipantFilters
                 filters={filters}
                 onFiltersChange={setFilters}
@@ -111,17 +149,45 @@ const Participants = () => {
             </div>
 
             {/* Desktop Results Count */}
-            <div className="hidden lg:flex items-center justify-between mb-6">
+            <div className="hidden lg:flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold">
                 {filters.role === 'all' ? 'All Participants' : 
-                 filters.role === 'mentee' ? 'Mentees' :
-                 filters.role === 'mentor' ? 'Mentors' :
-                 filters.role === 'fellow' ? 'Fellows' : 'Counselors'}
+                 filters.role?.charAt(0).toUpperCase() + filters.role?.slice(1) + 's'}
               </h2>
               <span className="text-sm text-muted-foreground">
                 {filteredParticipants.length} results
               </span>
             </div>
+            
+            {/* Active Filters Display */}
+            {getActiveFilterCount() > 0 && (
+              <div className="flex items-center gap-2 flex-wrap mb-4">
+                {filters.q && (
+                  <Badge variant="secondary" className="gap-1">
+                    Search: {filters.q}
+                    <Button variant="ghost" size="sm" className="h-auto p-0.5 hover:bg-transparent" onClick={() => updateFilter('q', '')}>
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </Badge>
+                )}
+                {filters.industries?.map((industry) => (
+                  <Badge key={industry} variant="secondary" className="gap-1">
+                    {industry}
+                    <Button variant="ghost" size="sm" className="h-auto p-0.5 hover:bg-transparent" onClick={() => toggleArrayFilter('industries', industry)}>
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </Badge>
+                ))}
+                {filters.expertises?.map((expertise) => (
+                  <Badge key={expertise} variant="secondary" className="gap-1">
+                    {expertise}
+                    <Button variant="ghost" size="sm" className="h-auto p-0.5 hover:bg-transparent" onClick={() => toggleArrayFilter('expertises', expertise)}>
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </Badge>
+                ))}
+              </div>
+            )}
 
             {/* Results Grid */}
             {filteredParticipants.length > 0 ? (
@@ -138,15 +204,6 @@ const Participants = () => {
                 <h3 className="text-lg font-semibold mb-2">No participants found</h3>
                 <p className="text-muted-foreground mb-4">
                   Try adjusting your filters to see more results.
-                </p>
-              </div>
-            )}
-
-            {/* Load More - Placeholder for pagination */}
-            {filteredParticipants.length > 0 && filteredParticipants.length >= 12 && (
-              <div className="text-center mt-12">
-                <p className="text-sm text-muted-foreground">
-                  Showing {filteredParticipants.length} of {MOCK_PARTICIPANTS.length} participants
                 </p>
               </div>
             )}

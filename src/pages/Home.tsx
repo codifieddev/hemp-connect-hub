@@ -136,7 +136,7 @@ const Home = () => {
             <Button size="lg" variant="secondary" asChild className="text-lg px-8 py-4">
               <Link to="/participants">Browse Directory</Link>
             </Button>
-            <Button size="lg" variant="outline" asChild className="text-lg px-8 py-4 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+            <Button size="lg" variant="outline" asChild className="text-lg px-8 py-4 bg-white/10 border-white/30 text-white hover:bg-white/20">
               <Link to="/events">View Events</Link>
             </Button>
           </div>

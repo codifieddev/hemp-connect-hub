@@ -64,6 +64,7 @@ const ParticipantFilters = ({ filters, onFiltersChange, showRoleFilter = true }:
             className="pl-10"
           />
         </div>
+
       </div>
 
       {/* Role Filter */}
@@ -204,50 +205,7 @@ const ParticipantFilters = ({ filters, onFiltersChange, showRoleFilter = true }:
         </SheetContent>
       </Sheet>
 
-      {/* Active Filters Display */}
-      {getActiveFilterCount() > 0 && (
-        <div className="flex items-center gap-2 flex-wrap">
-          {filters.q && (
-            <Badge variant="secondary" className="gap-1">
-              Search: {filters.q}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-auto p-0.5 hover:bg-transparent"
-                onClick={() => updateFilter('q', '')}
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </Badge>
-          )}
-          {filters.industries?.map((industry) => (
-            <Badge key={industry} variant="secondary" className="gap-1">
-              {industry}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-auto p-0.5 hover:bg-transparent"
-                onClick={() => toggleArrayFilter('industries', industry)}
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </Badge>
-          ))}
-          {filters.expertises?.map((expertise) => (
-            <Badge key={expertise} variant="secondary" className="gap-1">
-              {expertise}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-auto p-0.5 hover:bg-transparent"
-                onClick={() => toggleArrayFilter('expertises', expertise)}
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </Badge>
-          ))}
-        </div>
-      )}
+      
     </>
   );
 };

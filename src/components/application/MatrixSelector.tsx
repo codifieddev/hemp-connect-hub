@@ -55,7 +55,7 @@ export const MatrixSelector: React.FC<MatrixSelectorProps> = ({
       <Card>
         <CardHeader className="pb-4">
           <div className="grid grid-cols-5 gap-4 text-center">
-            <div className="font-medium text-sm">Category</div>
+            <div className="text-sm font-medium text-left">Category</div>
             {options.map(option => (
               <div key={option.value} className="font-medium text-sm">
                 <div>{option.label}</div>
@@ -71,6 +71,7 @@ export const MatrixSelector: React.FC<MatrixSelectorProps> = ({
         <CardContent className="space-y-4">
           {categories.map(category => (
             <div key={category.id} className="grid grid-cols-5 gap-4 items-center">
+              {/* Category Label (Column 1) */}
               <div className="text-sm font-medium">
                 <div>{category.label}</div>
                 {category.description && (
@@ -80,10 +81,13 @@ export const MatrixSelector: React.FC<MatrixSelectorProps> = ({
                 )}
               </div>
               
+              {/* Radio Buttons (Columns 2-5) */}
+              {/* === KEY CHANGE IS HERE === */}
+              {/* Added 'col-span-4' to make the RadioGroup span the remaining 4 columns */}
               <RadioGroup
                 value={values[category.id] || ''}
                 onValueChange={(value) => onChange(category.id, value)}
-                className="grid grid-cols-4 gap-4"
+                className="col-span-4 grid grid-cols-4 gap-4"
               >
                 {options.map(option => (
                   <div key={option.value} className="flex items-center justify-center">
