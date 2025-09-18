@@ -8,20 +8,59 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import Layout from '@/components/layout/Layout';
 import { MOCK_PARTICIPANTS } from '@/data/mockData';
+import { Participant } from '@/types/participant';
+
+interface TransformedParticipant {
+  id: string;
+  name: string;
+  title: string | undefined;
+  company: string | undefined;
+  role: string;
+  industry: string[];
+  location: string;
+  yearsInBusiness: number;
+  bio: string | undefined;
+  avatar: string | undefined;
+  contact: {
+    email: string;
+    phone: string;
+    linkedin: string;
+    website: string;
+  };
+}
 
 const Profile = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
-  const [participant, setParticipant] = useState<any>(null);
+  const [participant, setParticipant] = useState<TransformedParticipant | null>(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
 
   useEffect(() => {
     // In a real app, this would fetch from Supabase
     const foundParticipant = MOCK_PARTICIPANTS.find(p => p.id === id);
-    setParticipant(foundParticipant || null);
-    
-    // Check if this is the logged-in user's profile
-    setIsOwnProfile(user?.id === id);
+    if (foundParticipant) {
+      const transformedParticipant: TransformedParticipant = {
+        id: foundParticipant.id,
+        name: `${foundParticipant.firstName} ${foundParticipant.lastName}`,
+        title: foundParticipant.title,
+        company: foundParticipant.company,
+        role: foundParticipant.role,
+        industry: foundParticipant.industries,
+        location: foundParticipant.businessAddress 
+          ? `${foundParticipant.businessAddress.city}, ${foundParticipant.businessAddress.state}`
+          : 'Location not specified',
+        yearsInBusiness: new Date().getFullYear() - 2000, // Placeholder calculation
+        bio: foundParticipant.bio,
+        avatar: foundParticipant.headshotUrl,
+        contact: foundParticipant.contact
+      };
+      setParticipant(transformedParticipant);
+      
+      // Check if this is the logged-in user's profile
+      setIsOwnProfile(user?.id === id);
+    } else {
+      setParticipant(null);
+    }
   }, [id, user]);
 
   if (!participant) {
