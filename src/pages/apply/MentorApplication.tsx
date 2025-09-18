@@ -201,9 +201,69 @@ export const MentorApplication: React.FC = () => {
     }
   };
 
+  // ---------- Autofill helpers ----------
+  const lorem = (n: number) =>
+    ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ".repeat(10)).slice(0, n);
+
+  const mentorStepPatch = (step: number) => {
+    switch (step) {
+      case 0:
+        return {
+          person: { firstName: 'John', lastName: 'Smith', email: 'john.smith@example.com', title: 'President' },
+          company: { name: 'MentorCo', industry: ['Technology'], website: 'https://mentor.co' },
+          phones: { business: '8161112222', mobile: '8163334444' },
+          address: { business: { street1: '500 Market St', street2: '', city: 'Kansas City', state: 'MO', postalCode: '64106', country: 'US' } },
+          referral: { source: 'Friend' },
+        };
+      case 1:
+        return {
+          background: { yearsInLeadershipOrOwnership: 12 },
+          team: { fullTime: 50, partTime: 10, contractors: 5, total: 65 },
+          company: { type: 'LLC', typeOther: '', experienceNotes: '20 years in the industry' },
+        };
+      case 2:
+        return {
+          preferences: { expertiseAreas: ['Finance', 'Marketing'], availabilityHoursPerMonth: 10, meetingPreference: 'Virtual', capacityMentees: 2, geography: 'US', notes: 'Happy to help' },
+        };
+      case 3:
+        return {
+          strengths: { matrix: { leadership: 'Strong', strategy: 'Excellent' } },
+          narratives: { biggestSuccess: lorem(180), mistakes: [
+            { whatHappened: lorem(80), lesson: lorem(80) },
+            { whatHappened: lorem(80), lesson: lorem(80) },
+            { whatHappened: lorem(80), lesson: lorem(80) },
+          ], helpAreasAsLeader: lorem(160), whyHEMP: lorem(170) },
+        };
+      case 4:
+        return {
+          references: { business: [
+            { name: 'Ref One', company: 'Co A', phone: '8165550001', email: 'ref1@example.com' },
+            { name: 'Ref Two', company: 'Co B', phone: '8165550002', email: 'ref2@example.com' },
+            { name: 'Ref Three', company: 'Co C', phone: '8165550003', email: 'ref3@example.com' },
+          ] },
+        };
+      case 5:
+        return { uploads: { bio: ['bio.pdf'], headshot: ['head.jpg'], additionalDocs: ['addl.pdf'] } };
+      case 6:
+        return { signature: { typedName: 'John Smith', consent: true, drawn: '', method: 'typed', timestamp: new Date().toISOString(), ip: '127.0.0.1' } };
+      default:
+        return {};
+    }
+  };
+
+  const mentorAllData = () => {
+    let data: any = {};
+    for (let i = 0; i <= 6; i++) data = { ...data, ...mentorStepPatch(i) };
+    return { ...form.getValues(), ...data };
+  };
+
+  const autofillThisStep = () => form.reset({ ...form.getValues(), ...mentorStepPatch(currentStep) });
+  const autofillAndNext = async () => { autofillThisStep(); await handleNext(); };
+  const autofillAllSteps = () => form.reset(mentorAllData());
+
   return (
     <Layout>
-      <div className="container mx-auto py-8 max-w-4xl">
+      <div className="container mx-auto py-8 max-w-6xl px-4">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-center mb-2">HEMP Mentor Application</h1>
           <p className="text-muted-foreground text-center">
@@ -211,11 +271,16 @@ export const MentorApplication: React.FC = () => {
           </p>
         </div>
 
-        <Card className="mb-6">
+        <Card className="mb-6 blurb">
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle className="text-xl">Application Progress</CardTitle>
-              <AutosaveIndicator status={autosaveStatus} lastSaved={lastSaved} />
+              <div className="flex items-center gap-2">
+                <Button type="button" variant="secondary" onClick={autofillThisStep}>Autofill This Step</Button>
+                <Button type="button" variant="secondary" onClick={autofillAndNext}>Autofill & Next</Button>
+                <Button type="button" variant="secondary" onClick={autofillAllSteps}>Autofill All Steps</Button>
+                <AutosaveIndicator status={autosaveStatus} lastSaved={lastSaved} />
+              </div>
             </div>
           </CardHeader>
           <CardContent>

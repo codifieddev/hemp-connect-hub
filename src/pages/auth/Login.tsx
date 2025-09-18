@@ -10,23 +10,29 @@ import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const { signIn, isAdmin } = useAuth();
+  const { signIn, isAdmin, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Navigate once the auth context reflects a logged-in user
+  // This avoids racing on stale isAdmin value right after signIn
+  React.useEffect(() => {
+    if (!authLoading && user) {
+      navigate(isAdmin ? '/admin' : '/');
+    }
+  }, [authLoading, user, isAdmin, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setSubmitting(true);
     setError(null);
     const { error } = await signIn(email, password);
-    setLoading(false);
+    setSubmitting(false);
     if (error) {
       setError(error.message || 'Login failed');
-    } else {
-      setTimeout(() => navigate(isAdmin ? '/admin' : '/'), 50);
     }
   };
 
@@ -48,8 +54,8 @@ const Login = () => {
                 <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
               </div>
               {error && <p className="text-sm text-destructive">{error}</p>}
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Signing in...' : 'Sign In'}
+              <Button type="submit" className="w-full" disabled={submitting}>
+                {submitting ? 'Signing in...' : 'Sign In'}
               </Button>
             </form>
           </CardContent>

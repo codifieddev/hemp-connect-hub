@@ -206,6 +206,101 @@ export const MenteeApplication: React.FC = () => {
     }
   };
 
+  // ---------- Autofill helpers ----------
+  const lorem = (n: number) =>
+    ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ".repeat(10)).slice(0, n);
+
+  const menteeStepPatch = (step: number) => {
+    switch (step) {
+      case 0:
+        return {
+          applicant: { firstName: 'Jane', lastName: 'Doe', email: 'jane.doe@example.com', title: 'Founder' },
+          company: { name: 'Acme Co', type: 'LLC', typeOther: '', industry: ['Technology'], website: 'https://acme.co', phoneBusiness: '8161234567' },
+          applicant_phoneMobile: '8165551212',
+          referral: { source: 'Web search' },
+          address: { business: { street1: '123 Main St', street2: 'Suite 100', city: 'Kansas City', state: 'MO', postalCode: '64111', country: 'US' } },
+        };
+      case 1:
+        return {
+          company: {
+            yearsInBusiness: 2,
+            fiscalYearEnd: 'December',
+            founderIsApplicant: true,
+            ultimateDecisionMaker: true,
+            ownership: [{ name: 'Jane Doe', title: 'CEO', equityPercent: 100 }],
+          },
+          governance: { hasBoardOfDirectors: false, hasAdvisoryBoard: true, directorsCount: 3 },
+        };
+      case 2:
+        return { team: { fullTime: 3, partTime: 1, contractors: 2, total: 6 } };
+      case 3:
+        return {
+          finance: {
+            years: {
+              '2023': { fullTimeEmployees: 2, annualRevenue: 150000, revenueGrowthPercent: 20, profitGrowthPercent: 10, equityPercent: 100 },
+              '2024': { fullTimeEmployees: 3, annualRevenue: 250000, revenueGrowthPercent: 30, profitGrowthPercent: 15, equityPercent: 100 },
+              '2025': { fullTimeEmployees: 4, annualRevenue: 400000, revenueGrowthPercent: 60, profitGrowthPercent: 25, equityPercent: 100 },
+            },
+            wasProfitableLastYear: true,
+            currentlyProfitable: true,
+            largestCustomerSharePercent: 25,
+            takesAnnualSalary: true,
+            contextNotes: 'N/A',
+          },
+        };
+      case 4:
+        return {
+          strengths: { matrix: { leadership: 'Strong', finance: 'Moderate', sales: 'Strong' } },
+          narratives: {
+            biggestSuccess: lorem(160),
+            helpAreas: lorem(160),
+            mistakes: [
+              { whatHappened: lorem(80), lesson: lorem(80) },
+              { whatHappened: lorem(80), lesson: lorem(80) },
+              { whatHappened: lorem(80), lesson: lorem(80) },
+            ],
+            whyHEMP: lorem(170),
+          },
+        };
+      case 5:
+        return {
+          references: {
+            accountant: { name: 'A Person', firm: 'CPA LLC', phone: '8161112222', email: 'acct@example.com' },
+            attorney: { name: 'B Person', firm: 'Law LLC', phone: '8163334444', email: 'atty@example.com' },
+            bank: { name: 'C Person', bankName: 'Bank Inc', phone: '8165556666', email: 'bank@example.com' },
+            business: [
+              { name: 'Biz Ref 1', company: 'Co 1', phone: '8167778888', email: 'biz1@example.com' },
+              { name: 'Biz Ref 2', company: 'Co 2', phone: '8169990000', email: 'biz2@example.com' },
+            ],
+            customer: [
+              { name: 'Cust Ref 1', company: 'Cust Co 1', phone: '8161010101', email: 'cust1@example.com' },
+              { name: 'Cust Ref 2', company: 'Cust Co 2', phone: '8162020202', email: 'cust2@example.com' },
+            ],
+            supplier: [
+              { name: 'Supp Ref 1', company: 'Supp Co 1', phone: '8163030303', email: 'supp1@example.com' },
+              { name: 'Supp Ref 2', company: 'Supp Co 2', phone: '8164040404', email: 'supp2@example.com' },
+            ],
+          },
+        };
+      case 6:
+        return { uploads: { coverLetter: ['cover.pdf'], orgChart: ['org.pdf'], personalBioOrResume: ['bio.pdf'], businessDescription: ['desc.pdf'], releaseGeneral: ['gen.pdf'], releaseInfoAuthorization: ['auth.pdf'], releaseApplicationInfo: ['app.pdf'], headshot: ['head.jpg'] } };
+      case 7:
+        return { signature: { typedName: 'Jane Doe', consent: true, drawn: '', method: 'typed', timestamp: new Date().toISOString(), ip: '127.0.0.1' } };
+      default:
+        return {};
+    }
+  };
+
+  const menteeAllData = () => {
+    let data: any = {};
+    for (let i = 0; i <= 7; i++) data = { ...data, ...menteeStepPatch(i) };
+    return { ...form.getValues(), ...data };
+  };
+
+  const autofillThisStep = () => form.reset({ ...form.getValues(), ...menteeStepPatch(currentStep) });
+  const autofillAndNext = async () => { autofillThisStep(); await handleNext(); };
+  const autofillAllSteps = () => form.reset(menteeAllData());
+
   return (
     <Layout>
       <div className="container mx-auto py-8 max-w-6xl px-4">
@@ -220,7 +315,12 @@ export const MenteeApplication: React.FC = () => {
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle className="text-xl">Application Progress</CardTitle>
-              <AutosaveIndicator status={autosaveStatus} lastSaved={lastSaved} />
+              <div className="flex items-center gap-2">
+                <Button type="button" variant="secondary" onClick={autofillThisStep}>Autofill This Step</Button>
+                <Button type="button" variant="secondary" onClick={autofillAndNext}>Autofill & Next</Button>
+                <Button type="button" variant="secondary" onClick={autofillAllSteps}>Autofill All Steps</Button>
+                <AutosaveIndicator status={autosaveStatus} lastSaved={lastSaved} />
+              </div>
             </div>
           </CardHeader>
           <CardContent>
