@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // Admin note: This login page authenticates via Supabase.
 
 import Layout from '@/components/layout/Layout';
@@ -19,7 +19,7 @@ const Login = () => {
 
   // Navigate once the auth context reflects a logged-in user
   // This avoids racing on stale isAdmin value right after signIn
-  React.useEffect(() => {
+  useEffect(() => {
     if (!authLoading && user) {
       navigate(isAdmin ? '/admin' : '/');
     }
