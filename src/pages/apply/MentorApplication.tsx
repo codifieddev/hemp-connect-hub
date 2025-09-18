@@ -311,7 +311,7 @@ export const MentorApplication: React.FC = () => {
                 <Button type="button" variant="secondary" onClick={() => { handleAutofillStep(currentStep); if (currentStep < STEPS.length - 1) setCurrentStep(currentStep + 1); }}>
                   Autofill & Next
                 </Button>
-                <Button type="button" variant="outline" onClick={() => { for (let i = 0; i < 7; i++) handleAutofillStep(i); }}>
+                <Button type="button" variant="outline" onClick={() => { for (let i = 0; i < 7; i++) handleAutofillStep(i); setCurrentStep(STEPS.length - 1); }}>
                   Autofill All Steps
                 </Button>
               </div>
