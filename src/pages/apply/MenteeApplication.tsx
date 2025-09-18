@@ -360,6 +360,11 @@ export const MenteeApplication: React.FC = () => {
     }
   };
 
+  const autofillAllSteps = () => {
+    for (let i = 0; i < STEPS.length - 1; i++) handleAutofillStep(i);
+    setCurrentStep(STEPS.length - 1);
+  };
+
   return (
     <Layout>
       <div className="container mx-auto py-8 max-w-4xl">
@@ -382,7 +387,7 @@ export const MenteeApplication: React.FC = () => {
                 <Button type="button" variant="secondary" onClick={() => { handleAutofillStep(currentStep); if (currentStep < STEPS.length - 1) setCurrentStep(currentStep + 1); }}>
                   Autofill & Next
                 </Button>
-                <Button type="button" variant="outline" onClick={() => { for (let i = 0; i < 8; i++) handleAutofillStep(i); setCurrentStep(STEPS.length - 1); }}>
+                <Button type="button" variant="outline" onClick={autofillAllSteps}>
                   Autofill All Steps
                 </Button>
               </div>
