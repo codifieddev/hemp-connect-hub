@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Users, Filter } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import ParticipantCard from '@/components/participants/ParticipantCard';
@@ -10,6 +10,7 @@ import { MOCK_PARTICIPANTS, filterParticipants } from '@/data/mockData';
 
 const Participants = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [filters, setFilters] = useState<FilterType>({
     role: 'all',
     sort: 'name'
@@ -39,6 +40,13 @@ const Participants = () => {
 
   const handleTabChange = (role: string) => {
     setFilters(prev => ({ ...prev, role: role as any }));
+    // Update URL without reloading the page
+    const basePath = '/participants';
+    if (role === 'all') {
+      navigate(basePath);
+    } else {
+      navigate(`${basePath}/${role}s`);
+    }
   };
 
   return (
