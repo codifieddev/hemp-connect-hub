@@ -131,7 +131,7 @@ const ParticipantCard = ({ participant }: ParticipantCardProps) => {
         {/* Actions */}
         <div className="flex items-center justify-between pt-2">
           <Button variant="outline" size="sm" asChild>
-            <Link to={`/participant/${participant.slug}`}>
+            <Link to={`/profile/${participant.id}`}>
               <User className="h-4 w-4 mr-2" />
               View Profile
             </Link>

@@ -13,6 +13,7 @@ import { MenteeApplication } from "./pages/apply/MenteeApplication";
 import { MentorApplication } from "./pages/apply/MentorApplication";
 import NotFound from "./pages/NotFound";
 import AdminPanel from "./pages/admin/AdminPanel";
+import Profile from "./pages/profile/Profile";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/events" element={<Events />} />
           <Route path="/apply/mentee" element={<MenteeApplication />} />
           <Route path="/apply/mentor" element={<MentorApplication />} />
+          <Route path="/profile/:id" element={<Profile />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/admin" element={<AdminPanel />} />

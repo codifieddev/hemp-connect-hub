@@ -62,6 +62,12 @@ export const MOCK_PARTICIPANTS: Participant[] = [
       zip: '64111',
       country: 'USA'
     },
+    contact: {
+      email: 'sarah@techstartup.com',
+      phone: '(816) 555-0101',
+      linkedin: 'https://linkedin.com/in/sarahjohnson',
+      website: 'https://techstartupkc.com'
+    },
     availability: true,
     isPublic: true,
     showEmail: true,
@@ -90,6 +96,12 @@ export const MOCK_PARTICIPANTS: Participant[] = [
       zip: '64105',
       country: 'USA'
     },
+    contact: {
+      email: 'michael@greentech.com',
+      phone: '(816) 555-0102',
+      linkedin: 'https://linkedin.com/in/michaelchen',
+      website: 'https://greentechsolutions.com'
+    },
     isPublic: true,
     showEmail: false,
     status: 'approved',
@@ -116,6 +128,12 @@ export const MOCK_PARTICIPANTS: Participant[] = [
       state: 'MO',
       zip: '64112',
       country: 'USA'
+    },
+    contact: {
+      email: 'jennifer@davislaw.com',
+      phone: '(816) 555-0103',
+      linkedin: 'https://linkedin.com/in/jenniferdavis',
+      website: 'https://davislaw.com'
     },
     availability: true,
     isPublic: true,
@@ -145,6 +163,12 @@ export const MOCK_PARTICIPANTS: Participant[] = [
       zip: '66103',
       country: 'USA'
     },
+    contact: {
+      email: 'robert@kcdeli.com',
+      phone: '(816) 555-0104',
+      linkedin: 'https://linkedin.com/in/robertmartinez',
+      website: 'https://kcartisandeli.com'
+    },
     isPublic: true,
     showEmail: false,
     status: 'approved',
@@ -171,6 +195,12 @@ export const MOCK_PARTICIPANTS: Participant[] = [
       state: 'MO',
       zip: '64106',
       country: 'USA'
+    },
+    contact: {
+      email: 'amanda@wilsonfinancial.com',
+      phone: '(816) 555-0105',
+      linkedin: 'https://linkedin.com/in/amandawilson',
+      website: 'https://wilsonfinancial.com'
     },
     availability: true,
     isPublic: true,
@@ -199,6 +229,12 @@ export const MOCK_PARTICIPANTS: Participant[] = [
       state: 'MO',
       zip: '64108',
       country: 'USA'
+    },
+    contact: {
+      email: 'carlos@builditright.com',
+      phone: '(816) 555-0106',
+      linkedin: 'https://linkedin.com/in/carlosrodriguez',
+      website: 'https://builditrightconstruction.com'
     },
     isPublic: true,
     showEmail: true,

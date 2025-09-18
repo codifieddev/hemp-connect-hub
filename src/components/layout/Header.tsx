@@ -22,7 +22,7 @@ const Header = () => {
         { title: 'All Participants', href: '/participants', description: 'Browse our full directory' },
         { title: 'Mentees', href: '/participants/mentees', description: 'Emerging business leaders' },
         { title: 'Mentors', href: '/participants/mentors', description: 'Experienced business professionals' },
-        { title: 'Resource Guide', href: '/resource-guide', description: 'Find expertise and connections' },
+        { title: 'Resource Guide', href: '/participants', description: 'Find expertise and connections' },
       ]
     },
     {

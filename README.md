@@ -1,73 +1,105 @@
-# Welcome to your Lovable project
+# HEMP Connect Hub
 
-## Project info
+Welcome to HEMP Connect Hub - a platform for connecting entrepreneurs with mentors, fellows, and counselors in the HEMP community.
 
-**URL**: https://lovable.dev/projects/32321e3b-f0ad-4083-ae48-e07aefd0f9e0
+## Features
 
-## How can I edit this code?
+### Authentication
+- User registration and login with email/password
+- Role-based access control (mentee, mentor, fellow, counselor, admin)
+- Admin override via environment variables for testing
 
-There are several ways of editing your application.
+### Applications
+- Multi-step mentee application form with autosave functionality
+- Multi-step mentor application form with autosave functionality
+- Autofill buttons for quick testing and demonstration
 
-**Use Lovable**
+### Participant Directory
+- Browse and filter participants by role (mentees, mentors, fellows, counselors)
+- Search by name, company, title, industries, and expertise
+- Sort by name, company, class year, or recent activity
+- Detailed profile pages for each participant
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/32321e3b-f0ad-4083-ae48-e07aefd0f9e0) and start prompting.
+### Admin Panel
+- Role-based access to administrative functions
+- View and manage mentees, mentors, fellows, and counselors
+- Data sourced from Supabase database
 
-Changes made via Lovable will be committed automatically to this repo.
+### Responsive Design
+- Mobile-friendly interface
+- Consistent layout across all pages
 
-**Use your preferred IDE**
+## Setup Instructions
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
+- Node.js (version 16 or higher)
+- npm or yarn
+- Supabase account for database and authentication
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd hemp-connect-hub
+   ```
 
-Follow these steps:
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3. Create a `.env.local` file in the root directory with the following variables:
+   ```env
+   VITE_SUPABASE_URL=your_supabase_project_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   VITE_ADMIN_EMAILS=admin1@example.com,admin2@example.com
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Environment Variables
+- `VITE_SUPABASE_URL`: Your Supabase project URL
+- `VITE_SUPABASE_ANON_KEY`: Your Supabase anonymous key
+- `VITE_ADMIN_EMAILS`: Comma-separated list of admin email addresses for testing purposes
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## Database Schema
 
-**Edit a file directly in GitHub**
+The application uses the following tables in Supabase:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- `users`: Stores user information (id, email, role, name)
+- `mentees`: Mentee application data
+- `mentors`: Mentor application data
+- `fellows`: Fellow information
+- `counselors`: Counselor information
 
-**Use GitHub Codespaces**
+## Development
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Available Scripts
+- `npm run dev`: Starts the development server
+- `npm run build`: Builds the application for production
+- `npm run preview`: Previews the built application
+- `npm run lint`: Runs ESLint to check for code issues
 
-## What technologies are used for this project?
+### Technologies Used
+- React with TypeScript
+- Vite for build tooling
+- Supabase for backend services
+- shadcn/ui components
+- Tailwind CSS for styling
+- React Hook Form for form handling
+- Zod for validation
 
-This project is built with:
+## Deployment
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+The application can be deployed to any platform that supports static site hosting. We recommend using Vercel for seamless deployment integration with the frontend.
 
-## How can I deploy this project?
+## Contributing
 
-Simply open [Lovable](https://lovable.dev/projects/32321e3b-f0ad-4083-ae48-e07aefd0f9e0) and click on Share -> Publish.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Can I connect a custom domain to my Lovable project?
+## License
 
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+This project is licensed under the MIT License.
