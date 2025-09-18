@@ -9,7 +9,7 @@ import { Stepper } from '@/components/application/Stepper';
 import { AutosaveIndicator } from '@/components/application/AutosaveIndicator';
 import { ErrorSummary } from '@/components/application/ErrorSummary';
 import { useToast } from '@/hooks/use-toast';
-import { Layout } from '@/components/layout/Layout';
+import Layout from '@/components/layout/Layout';
 import { Separator } from '@/components/ui/separator';
 
 // Import step components

@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Participants from "./pages/Participants";
 import Events from "./pages/Events";
+import { MenteeApplication } from "./pages/apply/MenteeApplication";
+import { MentorApplication } from "./pages/apply/MentorApplication";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +26,8 @@ const App = () => (
           <Route path="/participants/fellows" element={<Participants />} />
           <Route path="/participants/counselors" element={<Participants />} />
           <Route path="/events" element={<Events />} />
+          <Route path="/apply/mentee" element={<MenteeApplication />} />
+          <Route path="/apply/mentor" element={<MentorApplication />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
