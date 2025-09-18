@@ -62,10 +62,19 @@ export const MentorApplication: React.FC = () => {
   const [validationErrors, setValidationErrors] = useState<any[]>([]);
   const { toast } = useToast();
 
+  // Autofill defaults (restores earlier behavior)
+  const defaultValues = {
+    person: { firstName: '', lastName: '', email: '', title: '' },
+    company: { name: '', industry: [], website: '' },
+    phones: { business: '', mobile: '' },
+    referral: { source: undefined },
+    address: { business: { street1: '', street2: '', city: '', state: '', postalCode: '', country: 'US' }, home: { street1: '', street2: '', city: '', state: '', postalCode: '', country: 'US' } },
+  } as any;
+
   const form = useForm({
     resolver: zodResolver(VALIDATION_SCHEMAS[currentStep]),
     mode: 'onChange',
-    defaultValues: {}
+    defaultValues
   });
 
   // Load saved data on mount
