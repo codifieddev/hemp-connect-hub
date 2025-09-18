@@ -12,6 +12,7 @@ import Events from "./pages/Events";
 import { MenteeApplication } from "./pages/apply/MenteeApplication";
 import { MentorApplication } from "./pages/apply/MentorApplication";
 import NotFound from "./pages/NotFound";
+import AdminPanel from "./pages/admin/AdminPanel";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/apply/mentor" element={<MentorApplication />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/admin" element={<AdminPanel />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

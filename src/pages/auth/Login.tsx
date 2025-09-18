@@ -1,4 +1,6 @@
 import { useState } from 'react';
+// Admin note: This login page authenticates via Supabase.
+
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +10,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const { signIn } = useAuth();
+  const { signIn, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,8 +23,11 @@ const Login = () => {
     setError(null);
     const { error } = await signIn(email, password);
     setLoading(false);
-    if (error) setError(error.message || 'Login failed');
-    else navigate('/');
+    if (error) {
+      setError(error.message || 'Login failed');
+    } else {
+      setTimeout(() => navigate(isAdmin ? '/admin' : '/'), 50);
+    }
   };
 
   return (
