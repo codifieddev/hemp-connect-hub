@@ -185,3 +185,11 @@
     background: var(--gradient-accent);
   }
 }
+  .blurb {
+    background-color: hsl(var(--muted));
+    padding: 1rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    margin-bottom: 1.5rem;
+  }
+
