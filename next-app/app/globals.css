@@ -1,0 +1,195 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* HEMP Design System - Professional business networking platform */
+
+@layer base {
+  :root {
+    /* Professional color palette */
+    --background: 0 0% 100%;
+    --foreground: 218 15% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 218 15% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 218 15% 15%;
+
+    /* Primary: Professional deep blue */
+    --primary: 217 91% 20%;
+    --primary-foreground: 0 0% 98%;
+    --primary-hover: 217 91% 25%;
+
+    /* Secondary: Sophisticated slate */
+    --secondary: 214 15% 91%;
+    --secondary-foreground: 218 15% 25%;
+
+    /* Muted: Subtle backgrounds */
+    --muted: 214 32% 96%;
+    --muted-foreground: 215 14% 45%;
+
+    /* Accent: Warm professional orange */
+    --accent: 25 95% 53%;
+    --accent-foreground: 0 0% 98%;
+    --accent-hover: 25 95% 48%;
+
+    /* Success: Professional green */
+    --success: 142 76% 25%;
+    --success-foreground: 0 0% 98%;
+
+    /* Warning: Attention orange */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 217 91% 60%;
+
+    /* Design system tokens */
+    --radius: 0.75rem;
+    --radius-sm: 0.5rem;
+    --radius-lg: 1rem;
+
+    /* Professional gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-hover)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(217 91% 15%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-hover)));
+
+    /* Professional shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-base: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+    /* Transitions */
+    --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-colors: color, background-color, border-color, text-decoration-color, fill, stroke 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+
+  .dark {
+    --background: 218 15% 8%;
+    --foreground: 0 0% 95%;
+
+    --card: 218 15% 10%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 218 15% 10%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 217 91% 45%;
+    --primary-foreground: 0 0% 98%;
+    --primary-hover: 217 91% 50%;
+
+    --secondary: 218 15% 15%;
+    --secondary-foreground: 0 0% 90%;
+
+    --muted: 218 15% 12%;
+    --muted-foreground: 215 14% 65%;
+
+    --accent: 25 95% 53%;
+    --accent-foreground: 0 0% 98%;
+    --accent-hover: 25 95% 58%;
+
+    --success: 142 76% 35%;
+    --success-foreground: 0 0% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 218 15% 20%;
+    --input: 218 15% 20%;
+    --ring: 217 91% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Professional scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+}
+
+@layer components {
+  /* Professional button variants */
+  .btn-hero {
+    @apply bg-gradient-to-r from-primary to-primary-hover text-primary-foreground font-semibold px-8 py-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105;
+  }
+
+  .btn-accent {
+    @apply bg-accent hover:bg-accent-hover text-accent-foreground font-semibold px-6 py-3 rounded-lg transition-colors duration-200;
+  }
+
+  /* Professional card styles */
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-1;
+  }
+
+  .card-professional {
+    @apply bg-card border border-border rounded-lg p-6 shadow-sm;
+  }
+
+  /* Professional gradients */
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .gradient-accent {
+    background: var(--gradient-accent);
+  }
+}
+  .blurb {
+    background-color: hsl(var(--muted));
+    padding: 1rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    margin-bottom: 1.5rem;
+  }
+

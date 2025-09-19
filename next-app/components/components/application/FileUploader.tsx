@@ -54,37 +54,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   error,
   className
 }) => {
-  // Normalize incoming values: allow string file names for testing/autofill
-  const normalize = (val: any[]): FileUploadItem[] => {
-    if (!Array.isArray(val)) return [];
-    if (val.length === 0) return [];
-    if (typeof val[0] === 'string') {
-      const toMime = (name: string) => {
-        const ext = name.split('.').pop()?.toLowerCase();
-        switch (ext) {
-          case 'pdf': return 'application/pdf';
-          case 'docx': return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-          case 'png': return 'image/png';
-          case 'jpg':
-          case 'jpeg': return 'image/jpeg';
-          default: return 'application/octet-stream';
-        }
-      };
-      return (val as string[]).map((name) => {
-        const blob = new Blob(['static'], { type: toMime(name) });
-        const file = new File([blob], name, { type: blob.type });
-        return { id: Math.random().toString(36).slice(2), file, progress: 100, status: 'completed' as const };
-      });
-    }
-    return val as FileUploadItem[];
-  };
-
-  const [uploadingFiles, setUploadingFiles] = useState<FileUploadItem[]>(normalize(value));
-
-  // Keep state in sync if parent updates value
-  React.useEffect(() => {
-    setUploadingFiles(normalize(value));
-  }, [JSON.stringify(value)]);
+  const [uploadingFiles, setUploadingFiles] = useState<FileUploadItem[]>(value);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const newFiles: FileUploadItem[] = acceptedFiles.map(file => ({

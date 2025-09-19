@@ -754,14 +754,19 @@ export const MenteeApplication: React.FC = () => {
     // In a real app, this would send an email with a magic link
   };
 
-  const handleSubmit = () => {
-    toast({
-      title: "Application Submitted",
-      description: "Thank you! Your mentee application has been submitted successfully.",
-    });
-    // Clear saved data
-    localStorage.removeItem('mentee-application');
-    // In a real app, this would submit to the backend
+  const handleSubmit = async () => {
+    try {
+      const { saveApplication } = await import('@/lib/saveApplication');
+      await saveApplication('mentee', form.getValues());
+      toast({
+        title: 'Application Submitted',
+        description: 'Thank you! Your mentee application has been submitted successfully.',
+      });
+      localStorage.removeItem('mentee-application');
+    } catch (e: any) {
+      console.error(e);
+      toast({ title: 'Save failed', description: e?.message || 'Unable to save application', variant: 'destructive' });
+    }
   };
 
   const renderCurrentStep = () => {
