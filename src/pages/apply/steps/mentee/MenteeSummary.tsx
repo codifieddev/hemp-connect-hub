@@ -15,10 +15,14 @@ interface MenteeSummaryProps {
 export const MenteeSummary: React.FC<MenteeSummaryProps> = ({ form, onSubmit, onPrevious }) => {
   const formData = form.getValues();
   
+  const isNonEmpty = (v: any) => v !== undefined && v !== null && !(typeof v === 'string' && v.trim() === '');
+
   const validateSection = (sectionData: any, requiredFields: string[]): boolean => {
     return requiredFields.every(field => {
       const value = field.split('.').reduce((obj, key) => obj?.[key], sectionData);
-      return value !== undefined && value !== null && value !== '';
+      if (Array.isArray(value)) return value.length > 0;
+      if (typeof value === 'object') return value && Object.keys(value).length > 0;
+      return isNonEmpty(value);
     });
   };
 

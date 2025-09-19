@@ -877,13 +877,25 @@ export const MenteeApplication: React.FC = () => {
     }
   };
 
-  const menteeAllData = () => {
-    let data: any = {};
-    for (let i = 0; i <= 7; i++) data = { ...data, ...menteeStepPatch(i) };
-    return { ...form.getValues(), ...data };
+  const deepMerge = (target: any, source: any): any => {
+    if (Array.isArray(target) || Array.isArray(source)) return source ?? target;
+    if (target && typeof target === 'object' && source && typeof source === 'object') {
+      const out: any = { ...target };
+      for (const key of Object.keys(source)) {
+        out[key] = deepMerge(target?.[key], source[key]);
+      }
+      return out;
+    }
+    return source ?? target;
   };
 
-  const autofillThisStep = () => form.reset({ ...form.getValues(), ...menteeStepPatch(currentStep) });
+  const menteeAllData = () => {
+    let data: any = form.getValues();
+    for (let i = 0; i <= 7; i++) data = deepMerge(data, menteeStepPatch(i));
+    return data;
+  };
+
+  const autofillThisStep = () => form.reset(deepMerge(form.getValues(), menteeStepPatch(currentStep)));
   const autofillAndNext = async () => { autofillThisStep(); await handleNext(); };
   const autofillAllSteps = () => form.reset(menteeAllData());
 
