@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { AuthService } from '@/service/authService/authService';
 
 const Register = () => {
   const { signUp } = useAuth();
@@ -19,11 +20,14 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { error } = await signUp(email, password);
-    setLoading(false);
-    if (error) setError(error.message || 'Registration failed');
-    else navigate('/');
-  };
+    // TODO: Replace with actual registration logic
+    setTimeout(() => {
+      setLoading(false);
+      setError(null);
+      // Simulate navigation or success
+      alert('Registered!');
+    }, 1000);
+  };;
 
   return (
     <Layout>

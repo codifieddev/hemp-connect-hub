@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import supabase from '@/lib/supabaseClient';
+
+import { AuthService } from '@/service/authService/authService';
+import { supabase } from '@/lib/supabaseClient';
 
 export type AppUser = {
   id: string;
@@ -43,7 +45,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.warn('Role fetch failed:', error.message);
       return null;
     }
-    return data?.role ?? null;
+    if (!data) return null;
+    return data.role ?? null;
   };
 
   const ensureUserRecord = async (email: string | null | undefined, name?: string | null) => {
@@ -55,6 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .select('id, role')
         .eq('email', email)
         .maybeSingle();
+        console.log('Existing user record:', existing);
       if (!existing) {
         await supabase.from('users').upsert({ email, name: name || null, role: desiredRole || 'mentee' }, { onConflict: 'email' });
       } else if (desiredRole && existing.role !== desiredRole) {
@@ -89,12 +93,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     return () => subscription.unsubscribe();
   }, []);
+  
+      const signIn = async (email: string, password: string) => {
+        if (!supabase) return { error: 'Supabase not configured' };
+        // auth service
+        const result = await AuthService.signIn({ email, password });
+        console.log('SignIn result:--->', result);
+        if ('error' in result) {
+          return { error: result.error };
+        }
+        return { error: undefined };
+      };
 
-  const signIn = async (email: string, password: string) => {
-    if (!supabase) return { error: 'Supabase not configured' } as any;
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error } as any;
-  };
 
   const signUp = async (email: string, password: string) => {
     if (!supabase) return { error: 'Supabase not configured' } as any;
