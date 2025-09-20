@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
+// import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +9,8 @@ import { Separator } from '@/components/ui/separator';
 import Layout from '@/components/layout/Layout';
 import { MOCK_PARTICIPANTS } from '@/data/mockData';
 import { Participant } from '@/types/participant';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/slice/user/store';
 
 interface TransformedParticipant {
   id: string;
@@ -21,7 +23,7 @@ interface TransformedParticipant {
   yearsInBusiness: number;
   bio: string | undefined;
   avatar: string | undefined;
-  contact: {
+  contact?: {
     email: string;
     phone: string;
     linkedin: string;
@@ -31,7 +33,9 @@ interface TransformedParticipant {
 
 const Profile = () => {
   const { id } = useParams<{ id: string }>();
-  const { user } = useAuth();
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+
+  // const { user } = useAuth();
   const [participant, setParticipant] = useState<TransformedParticipant | null>(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
 
@@ -52,7 +56,7 @@ const Profile = () => {
         yearsInBusiness: new Date().getFullYear() - 2000, // Placeholder calculation
         bio: foundParticipant.bio,
         avatar: foundParticipant.headshotUrl,
-        contact: foundParticipant.contact
+        // contact: foundParticipant?.contact
       };
       setParticipant(transformedParticipant);
       

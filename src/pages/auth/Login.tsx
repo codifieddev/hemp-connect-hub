@@ -6,34 +6,38 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth } from '@/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
+import { useNavigate } from 'react-router-dom';
+import { AuthService } from '@/service/authService/authService';
+import { AppDispatch, RootState } from '@/redux/slice/user/store';
+import { login } from '@/redux/slice/user/AuthSlice';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 const Login = () => {
-  const { signIn, isAdmin, user, loading: authLoading } = useAuth();
+  // const { signIn, isAdmin, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+   const dispatch = useDispatch<AppDispatch>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+ 
+  const { isAuthenticated, user} = useSelector((state: RootState) => state.auth);
 
   // Navigate once the auth context reflects a logged-in user
   // This avoids racing on stale isAdmin value right after signIn
   useEffect(() => {
-    if (!authLoading && user) {
-      navigate(isAdmin ? '/admin' : '/');
-    }
-  }, [authLoading, user, isAdmin, navigate]);
+    if (isAuthenticated && user && user.id && user.role) {
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+      navigate(user.role === 'admin' ? '/admin' : '/');
+    }
+  }, [isAuthenticated, user,navigate]);
+
+ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setSubmitting(true);
     setError(null);
-    const { error } = await signIn(email, password);
-    setSubmitting(false);
-    if (error) {
-      setError(error.message || 'Login failed');
-    }
+    await dispatch(login({ email, password }));
   };
 
   return (
@@ -66,3 +70,7 @@ const Login = () => {
 };
 
 export default Login;
+function useAppDispatch<T>() {
+  throw new Error('Function not implemented.');
+}
+
