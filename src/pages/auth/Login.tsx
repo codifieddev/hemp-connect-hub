@@ -9,37 +9,35 @@ import { Label } from '@/components/ui/label';
 
 import { useNavigate } from 'react-router-dom';
 import { AuthService } from '@/service/authService/authService';
-
+import { AppDispatch, RootState } from '@/redux/slice/user/store';
+import { login } from '@/redux/slice/user/AuthSlice';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 const Login = () => {
   // const { signIn, isAdmin, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+   const dispatch = useDispatch<AppDispatch>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+ 
+  const { isAuthenticated, user} = useSelector((state: RootState) => state.auth);
 
   // Navigate once the auth context reflects a logged-in user
   // This avoids racing on stale isAdmin value right after signIn
-  // useEffect(() => {
-  //   if (!authLoading && user) {
-  //     navigate(isAdmin ? '/admin' : '/');
-  //   }
-  // }, [authLoading, user, isAdmin, navigate]);
+  useEffect(() => {
+    if (isAuthenticated && user && user.id && user.role) {
+
+      navigate(user.role === 'admin' ? '/admin' : '/');
+    }
+  }, [isAuthenticated, user,navigate]);
 
  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitting(true);
     setError(null);
-    try {
-      console.log("Login attempt with:", email, password);
-      const response = await AuthService.login(email, password);
-      console.log("Login response:", response);
-      alert("Signed in!");
-    } catch (error) {
-      setError("Failed to sign in");
-    } finally {
-      setSubmitting(false);
-    }
+    await dispatch(login({ email, password }));
   };
 
   return (
@@ -72,3 +70,7 @@ const Login = () => {
 };
 
 export default Login;
+function useAppDispatch<T>() {
+  throw new Error('Function not implemented.');
+}
+
