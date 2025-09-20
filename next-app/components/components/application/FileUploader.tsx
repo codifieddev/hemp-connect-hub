@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Upload, File as FileIcon, X, CheckCircle } from 'lucide-react';
+import { Upload, File, X, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface FileUploadItem {
@@ -54,37 +54,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   error,
   className
 }) => {
-  // Normalize incoming values: allow string file names for testing/autofill
-  const normalize = (val: any[]): FileUploadItem[] => {
-    if (!Array.isArray(val)) return [];
-    if (val.length === 0) return [];
-    if (typeof val[0] === 'string') {
-      const toMime = (name: string) => {
-        const ext = name.split('.').pop()?.toLowerCase();
-        switch (ext) {
-          case 'pdf': return 'application/pdf';
-          case 'docx': return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-          case 'png': return 'image/png';
-          case 'jpg':
-          case 'jpeg': return 'image/jpeg';
-          default: return 'application/octet-stream';
-        }
-      };
-      return (val as string[]).map((name) => {
-        const blob = new Blob(['static'], { type: toMime(name) });
-        const file = new File([blob], name, { type: blob.type });
-        return { id: Math.random().toString(36).slice(2), file, progress: 100, status: 'completed' as const };
-      });
-    }
-    return val as FileUploadItem[];
-  };
-
-  const [uploadingFiles, setUploadingFiles] = useState<FileUploadItem[]>(normalize(value as any));
-
-  // Keep state in sync if parent updates value
-  React.useEffect(() => {
-    setUploadingFiles(normalize(value as any));
-  }, [JSON.stringify(value)]);
+  const [uploadingFiles, setUploadingFiles] = useState<FileUploadItem[]>(value);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const newFiles: FileUploadItem[] = acceptedFiles.map(file => ({
@@ -187,7 +157,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3 min-w-0 flex-1">
-                    <FileIcon className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                    <File className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium truncate">
                         {fileItem.file.name}

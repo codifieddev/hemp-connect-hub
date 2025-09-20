@@ -11,7 +11,6 @@ import { ErrorSummary } from '@/components/application/ErrorSummary';
 import { useToast } from '@/hooks/use-toast';
 import Layout from '@/components/layout/Layout';
 import { Separator } from '@/components/ui/separator';
-import { MATRIX_CATEGORIES, getCurrentYears } from '@/data/applicationData';
 
 // Import step components
 import { MenteeStep1 } from './steps/mentee/MenteeStep1';
@@ -25,7 +24,7 @@ import { MenteeStep8 } from './steps/mentee/MenteeStep8';
 import { MenteeSummary } from './steps/mentee/MenteeSummary';
 
 // Import validation schemas
-import {
+import { 
   menteeStep1Schema,
   menteeStep2Schema,
   menteeStep3Schema,
@@ -100,7 +99,7 @@ export const MenteeApplication: React.FC = () => {
   useEffect(() => {
     const subscription = form.watch((data) => {
       setAutosaveStatus('saving');
-
+      
       const saveData = {
         formData: data,
         currentStep,
@@ -174,19 +173,14 @@ export const MenteeApplication: React.FC = () => {
     // In a real app, this would send an email with a magic link
   };
 
-  const handleSubmit = async () => {
-    try {
-      const { saveApplication } = await import('@/lib/saveApplication');
-      await saveApplication('mentee', form.getValues());
-      toast({
-        title: 'Application Submitted',
-        description: 'Thank you! Your mentee application has been submitted successfully.',
-      });
-      localStorage.removeItem('mentee-application');
-    } catch (e: any) {
-      console.error(e);
-      toast({ title: 'Save failed', description: e?.message || 'Unable to save application', variant: 'destructive' });
-    }
+  const handleSubmit = () => {
+    toast({
+      title: "Application Submitted",
+      description: "Thank you! Your mentee application has been submitted successfully.",
+    });
+    // Clear saved data
+    localStorage.removeItem('mentee-application');
+    // In a real app, this would submit to the backend
   };
 
   const renderCurrentStep = () => {
@@ -297,33 +291,21 @@ export const MenteeApplication: React.FC = () => {
     }
   };
 
-  const deepMerge = (target: any, source: any): any => {
-    if (Array.isArray(target) || Array.isArray(source)) return source ?? target;
-    if (target && typeof target === 'object' && source && typeof source === 'object') {
-      const out: any = { ...target };
-      for (const key of Object.keys(source)) {
-        out[key] = deepMerge(target?.[key], source[key]);
-      }
-      return out;
-    }
-    return source ?? target;
-  };
-
   const menteeAllData = () => {
-    let data: any = form.getValues();
-    for (let i = 0; i <= 7; i++) data = deepMerge(data, menteeStepPatch(i));
-    return data;
+    let data: any = {};
+    for (let i = 0; i <= 7; i++) data = { ...data, ...menteeStepPatch(i) };
+    return { ...form.getValues(), ...data };
   };
 
-  const autofillThisStep = () => form.reset(deepMerge(form.getValues(), menteeStepPatch(currentStep)));
+  const autofillThisStep = () => form.reset({ ...form.getValues(), ...menteeStepPatch(currentStep) });
   const autofillAndNext = async () => { autofillThisStep(); await handleNext(); };
   const autofillAllSteps = () => form.reset(menteeAllData());
 
   return (
     <Layout>
-      <div className="container mx-auto py-8 max-w-7xl px-4">
+      <div className="container mx-auto py-8 max-w-6xl px-4">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-center mb-2">HEMP Mentee Application </h1>
+          <h1 className="text-3xl font-bold text-center mb-2">HEMP Mentee Application</h1>
           <p className="text-muted-foreground text-center">
             Complete your application to join the HEMP mentee program
           </p>
@@ -332,26 +314,21 @@ export const MenteeApplication: React.FC = () => {
         <Card className="mb-6 blurb">
           <CardHeader>
             <div className="flex justify-between items-center">
-              <CardTitle className="text-xl font-medium">Application Progress</CardTitle>
+              <CardTitle className="text-xl">Application Progress</CardTitle>
               <div className="flex items-center gap-2">
-                <Button type="button" variant="secondary" className='border border-primary hover:bg-primary hover:text-white bg-white' onClick={autofillThisStep}>Autofill This Step</Button>
-                <Button type="button" variant="secondary" className='border border-primary hover:bg-primary hover:text-white bg-white' onClick={autofillAndNext}>Autofill & Next</Button>
-                <Button type="button" variant="secondary" className='border border-primary hover:bg-primary hover:text-white bg-white' onClick={autofillAllSteps}>Autofill All Steps</Button>
+                <Button type="button" variant="secondary" onClick={autofillThisStep}>Autofill This Step</Button>
+                <Button type="button" variant="secondary" onClick={autofillAndNext}>Autofill & Next</Button>
+                <Button type="button" variant="secondary" onClick={autofillAllSteps}>Autofill All Steps</Button>
                 <AutosaveIndicator status={autosaveStatus} lastSaved={lastSaved} />
               </div>
             </div>
           </CardHeader>
-
           <CardContent>
-            {/* === CHANGE IS HERE === */}
-            <div className="w-full overflow-x-auto py-2">
-              <Stepper
-                steps={STEPS}
-                currentStep={currentStep}
-                onStepClick={handleStepClick}
-              />
-            </div>
-            {/* ====================== */}
+            <Stepper
+              steps={STEPS}
+              currentStep={currentStep}
+              onStepClick={handleStepClick}
+            />
           </CardContent>
         </Card>
 
@@ -383,7 +360,7 @@ export const MenteeApplication: React.FC = () => {
               >
                 Save & Finish Later
               </Button>
-
+              
               <div className="space-x-2">
                 <Button
                   type="button"
@@ -393,14 +370,14 @@ export const MenteeApplication: React.FC = () => {
                 >
                   Previous
                 </Button>
-
+                
                 {currentStep < STEPS.length - 1 ? (
                   <Button type="button" onClick={handleNext}>
                     Next
                   </Button>
                 ) : (
-                  <Button
-                    type="button"
+                  <Button 
+                    type="button" 
                     onClick={handleSubmit}
                     className="bg-primary"
                   >

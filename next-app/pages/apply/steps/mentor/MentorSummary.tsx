@@ -6,65 +6,55 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Edit, CheckCircle, AlertCircle } from 'lucide-react';
 
-interface MenteeSummaryProps {
+interface MentorSummaryProps {
   form: UseFormReturn<any>;
   onSubmit: () => void;
   onPrevious: () => void;
 }
 
-export const MenteeSummary: React.FC<MenteeSummaryProps> = ({ form, onSubmit, onPrevious }) => {
+export const MentorSummary: React.FC<MentorSummaryProps> = ({ form, onSubmit, onPrevious }) => {
   const formData = form.getValues();
   
-  const isNonEmpty = (v: any) => v !== undefined && v !== null && !(typeof v === 'string' && v.trim() === '');
-
   const validateSection = (sectionData: any, requiredFields: string[]): boolean => {
     return requiredFields.every(field => {
       const value = field.split('.').reduce((obj, key) => obj?.[key], sectionData);
-      if (Array.isArray(value)) return value.length > 0;
-      if (typeof value === 'object') return value && Object.keys(value).length > 0;
-      return isNonEmpty(value);
+      return value !== undefined && value !== null && value !== '';
     });
   };
 
   const sections = [
     {
-      title: 'Applicant & Business',
+      title: 'Person & Business',
       step: 0,
       data: formData,
       isValid: validateSection(formData, [
-        'applicant.firstName',
-        'applicant.lastName', 
-        'applicant.email',
+        'person.firstName',
+        'person.lastName', 
+        'person.email',
         'company.name'
       ])
     },
     {
-      title: 'Company Basics',
+      title: 'Background',
       step: 1,
       data: formData,
       isValid: validateSection(formData, [
-        'company.yearsInBusiness',
-        'company.fiscalYearEnd'
+        'background.yearsInLeadershipOrOwnership',
+        'company.type'
       ])
     },
     {
-      title: 'Team',
+      title: 'Mentor Preferences',
       step: 2,
       data: formData,
-      isValid: validateSection(formData, ['team.total'])
-    },
-    {
-      title: 'Financial Snapshot',
-      step: 3,
-      data: formData,
       isValid: validateSection(formData, [
-        'finance.wasProfitableLastYear',
-        'finance.currentlyProfitable'
-      ])
+        'preferences.expertiseAreas',
+        'preferences.meetingPreference'
+      ]) && formData.preferences?.expertiseAreas?.length > 0
     },
     {
-      title: 'Strengths & Needs',
-      step: 4,
+      title: 'Strengths & Reflection',
+      step: 3,
       data: formData,
       isValid: validateSection(formData, [
         'narratives.biggestSuccess',
@@ -73,22 +63,19 @@ export const MenteeSummary: React.FC<MenteeSummaryProps> = ({ form, onSubmit, on
     },
     {
       title: 'References',
-      step: 5,
+      step: 4,
       data: formData,
-      isValid: validateSection(formData, [
-        'references.accountant.name',
-        'references.attorney.name'
-      ])
+      isValid: formData.references?.business?.length >= 3
     },
     {
       title: 'Uploads',
-      step: 6,
+      step: 5,
       data: formData,
-      isValid: formData.uploads?.coverLetter?.length > 0
+      isValid: formData.uploads?.bio?.length > 0
     },
     {
       title: 'Signature',
-      step: 7,
+      step: 6,
       data: formData,
       isValid: formData.signature?.consent && formData.signature?.typedName
     }
@@ -132,13 +119,13 @@ export const MenteeSummary: React.FC<MenteeSummaryProps> = ({ form, onSubmit, on
 
       <Card>
         <CardHeader>
-          <CardTitle>Application Summary</CardTitle>
+          <CardTitle>Mentor Application Summary</CardTitle>
           <p className="text-muted-foreground">
             Review your information before submitting
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Applicant Information */}
+          {/* Personal Information */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <h4 className="font-semibold flex items-center">
@@ -147,7 +134,7 @@ export const MenteeSummary: React.FC<MenteeSummaryProps> = ({ form, onSubmit, on
                 ) : (
                   <AlertCircle className="h-4 w-4 text-destructive mr-2" />
                 )}
-                Applicant Information
+                Personal Information
               </h4>
               <Button variant="ghost" size="sm">
                 <Edit className="h-4 w-4" />
@@ -155,13 +142,13 @@ export const MenteeSummary: React.FC<MenteeSummaryProps> = ({ form, onSubmit, on
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="font-medium">Name:</span> {formData.applicant?.firstName} {formData.applicant?.lastName}
+                <span className="font-medium">Name:</span> {formData.person?.firstName} {formData.person?.lastName}
               </div>
               <div>
-                <span className="font-medium">Email:</span> {formData.applicant?.email}
+                <span className="font-medium">Email:</span> {formData.person?.email}
               </div>
               <div>
-                <span className="font-medium">Title:</span> {formData.applicant?.title}
+                <span className="font-medium">Title:</span> {formData.person?.title}
               </div>
               <div>
                 <span className="font-medium">Company:</span> {formData.company?.name}
@@ -171,7 +158,7 @@ export const MenteeSummary: React.FC<MenteeSummaryProps> = ({ form, onSubmit, on
 
           <Separator />
 
-          {/* Company Information */}
+          {/* Experience */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <h4 className="font-semibold flex items-center">
@@ -180,7 +167,7 @@ export const MenteeSummary: React.FC<MenteeSummaryProps> = ({ form, onSubmit, on
                 ) : (
                   <AlertCircle className="h-4 w-4 text-destructive mr-2" />
                 )}
-                Company Details
+                Leadership Experience
               </h4>
               <Button variant="ghost" size="sm">
                 <Edit className="h-4 w-4" />
@@ -188,19 +175,27 @@ export const MenteeSummary: React.FC<MenteeSummaryProps> = ({ form, onSubmit, on
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="font-medium">Type:</span> {formData.company?.type}
+                <span className="font-medium">Years in Leadership:</span> {formData.background?.yearsInLeadershipOrOwnership}
               </div>
               <div>
-                <span className="font-medium">Years in Business:</span> {formData.company?.yearsInBusiness}
+                <span className="font-medium">Company Type:</span> {formData.company?.type}
+              </div>
+              <div>
+                <span className="font-medium">Team Size:</span> {formData.team?.total || 0} people
               </div>
               <div>
                 <span className="font-medium">Industries:</span>
                 <div className="flex flex-wrap gap-1 mt-1">
-                  {formData.company?.industry?.map((ind: string) => (
+                  {formData.company?.industry?.slice(0, 3).map((ind: string) => (
                     <Badge key={ind} variant="outline" className="text-xs">
                       {ind}
                     </Badge>
                   ))}
+                  {formData.company?.industry?.length > 3 && (
+                    <Badge variant="outline" className="text-xs">
+                      +{formData.company.industry.length - 3} more
+                    </Badge>
+                  )}
                 </div>
               </div>
             </div>
@@ -208,7 +203,7 @@ export const MenteeSummary: React.FC<MenteeSummaryProps> = ({ form, onSubmit, on
 
           <Separator />
 
-          {/* Team Size */}
+          {/* Mentoring Preferences */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <h4 className="font-semibold flex items-center">
@@ -217,25 +212,62 @@ export const MenteeSummary: React.FC<MenteeSummaryProps> = ({ form, onSubmit, on
                 ) : (
                   <AlertCircle className="h-4 w-4 text-destructive mr-2" />
                 )}
-                Team Composition
+                Mentoring Preferences
               </h4>
               <Button variant="ghost" size="sm">
                 <Edit className="h-4 w-4" />
               </Button>
             </div>
-            <div className="grid grid-cols-4 gap-4 text-sm">
+            <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="font-medium">Full-time:</span> {formData.team?.fullTime || 0}
+                <span className="font-medium">Hours/Month:</span> {formData.preferences?.availabilityHoursPerMonth || 0}
               </div>
               <div>
-                <span className="font-medium">Part-time:</span> {formData.team?.partTime || 0}
+                <span className="font-medium">Mentee Capacity:</span> {formData.preferences?.capacityMentees || 0}
               </div>
               <div>
-                <span className="font-medium">Contractors:</span> {formData.team?.contractors || 0}
+                <span className="font-medium">Meeting Preference:</span> {formData.preferences?.meetingPreference}
               </div>
               <div>
-                <span className="font-medium">Total:</span> {formData.team?.total || 0}
+                <span className="font-medium">Expertise Areas:</span>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {formData.preferences?.expertiseAreas?.slice(0, 3).map((area: string) => (
+                    <Badge key={area} variant="secondary" className="text-xs">
+                      {area}
+                    </Badge>
+                  ))}
+                  {formData.preferences?.expertiseAreas?.length > 3 && (
+                    <Badge variant="secondary" className="text-xs">
+                      +{formData.preferences.expertiseAreas.length - 3} more
+                    </Badge>
+                  )}
+                </div>
               </div>
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* References */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-semibold flex items-center">
+                {sections[4].isValid ? (
+                  <CheckCircle className="h-4 w-4 text-success mr-2" />
+                ) : (
+                  <AlertCircle className="h-4 w-4 text-destructive mr-2" />
+                )}
+                References
+              </h4>
+              <Button variant="ghost" size="sm">
+                <Edit className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="text-sm">
+              <span className="font-medium">Business References:</span> {formData.references?.business?.length || 0} provided
+              {formData.references?.business?.length < 3 && (
+                <span className="text-destructive ml-2">(minimum 3 required)</span>
+              )}
             </div>
           </div>
 
@@ -245,7 +277,7 @@ export const MenteeSummary: React.FC<MenteeSummaryProps> = ({ form, onSubmit, on
           <div>
             <div className="flex items-center justify-between mb-3">
               <h4 className="font-semibold flex items-center">
-                {sections[6].isValid ? (
+                {sections[5].isValid ? (
                   <CheckCircle className="h-4 w-4 text-success mr-2" />
                 ) : (
                   <AlertCircle className="h-4 w-4 text-destructive mr-2" />
@@ -258,22 +290,17 @@ export const MenteeSummary: React.FC<MenteeSummaryProps> = ({ form, onSubmit, on
             </div>
             <div className="grid grid-cols-2 gap-2 text-sm">
               {[
-                { key: 'coverLetter', label: 'Cover Letter' },
-                { key: 'orgChart', label: 'Organization Chart' },
-                { key: 'personalBioOrResume', label: 'Bio/Resume' },
-                { key: 'businessDescription', label: 'Business Description' },
-                { key: 'releaseGeneral', label: 'General Release' },
-                { key: 'releaseInfoAuthorization', label: 'Info Authorization' },
-                { key: 'releaseApplicationInfo', label: 'Application Release' },
-                { key: 'headshot', label: 'Headshot (Optional)' }
-              ].map(({ key, label }) => (
+                { key: 'bio', label: 'Professional Bio', required: true },
+                { key: 'headshot', label: 'Headshot (Optional)', required: false },
+                { key: 'additionalDocs', label: 'Additional Documents (Optional)', required: false }
+              ].map(({ key, label, required }) => (
                 <div key={key} className="flex items-center">
                   {formData.uploads?.[key]?.length > 0 ? (
                     <CheckCircle className="h-4 w-4 text-success mr-2" />
                   ) : (
-                    <AlertCircle className="h-4 w-4 text-muted-foreground mr-2" />
+                    <AlertCircle className={`h-4 w-4 mr-2 ${required ? 'text-destructive' : 'text-muted-foreground'}`} />
                   )}
-                  <span className={formData.uploads?.[key]?.length > 0 ? '' : 'text-muted-foreground'}>
+                  <span className={formData.uploads?.[key]?.length > 0 ? '' : required ? 'text-destructive' : 'text-muted-foreground'}>
                     {label}
                   </span>
                 </div>
@@ -287,7 +314,7 @@ export const MenteeSummary: React.FC<MenteeSummaryProps> = ({ form, onSubmit, on
           <div>
             <div className="flex items-center justify-between mb-3">
               <h4 className="font-semibold flex items-center">
-                {sections[7].isValid ? (
+                {sections[6].isValid ? (
                   <CheckCircle className="h-4 w-4 text-success mr-2" />
                 ) : (
                   <AlertCircle className="h-4 w-4 text-destructive mr-2" />
