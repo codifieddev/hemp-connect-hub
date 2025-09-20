@@ -1,9 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './AuthSlice';
-
+import participantReducer from '../../slice/participant/participantSlice';
 const store = configureStore({
   reducer: {
     auth: authReducer,
+    participant: participantReducer,
   },
 });
 

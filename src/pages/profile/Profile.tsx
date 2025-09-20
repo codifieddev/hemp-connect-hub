@@ -35,13 +35,14 @@ const Profile = () => {
   const { id } = useParams<{ id: string }>();
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
 
+  const {participants} = useSelector((state: RootState) => state.participant)
   // const { user } = useAuth();
   const [participant, setParticipant] = useState<TransformedParticipant | null>(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
 
   useEffect(() => {
     // In a real app, this would fetch from Supabase
-    const foundParticipant = MOCK_PARTICIPANTS.find(p => p.id === id);
+    const foundParticipant = participants.find(p => p.id === id);
     if (foundParticipant) {
       const transformedParticipant: TransformedParticipant = {
         id: foundParticipant.id,
@@ -56,16 +57,20 @@ const Profile = () => {
         yearsInBusiness: new Date().getFullYear() - 2000, // Placeholder calculation
         bio: foundParticipant.bio,
         avatar: foundParticipant.headshotUrl,
-        // contact: foundParticipant?.contact
+        contact: {
+          email: foundParticipant.email || '',
+          phone: foundParticipant.phone || '',
+          linkedin: foundParticipant.website || '',
+          website: foundParticipant.website || '',
+        },
       };
       setParticipant(transformedParticipant);
-      
       // Check if this is the logged-in user's profile
       setIsOwnProfile(user?.id === id);
     } else {
       setParticipant(null);
     }
-  }, [id, user]);
+  }, [id, user, participants]);
 
   if (!participant) {
     return (
@@ -82,6 +87,7 @@ const Profile = () => {
 
   return (
     <Layout>
+     {participant &&
       <div className="container px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Profile Header */}
@@ -163,7 +169,7 @@ const Profile = () => {
             </CardContent>
           </Card>
         </div>
-      </div>
+      </div>}
     </Layout>
   );
 };

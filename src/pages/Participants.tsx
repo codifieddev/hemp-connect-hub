@@ -9,8 +9,11 @@ import { ParticipantFilters as FilterType } from '@/types/participant';
 import { MOCK_PARTICIPANTS, filterParticipants } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useDispatch } from 'react-redux';
+import { setParticipants } from '@/redux/slice/participant/participantSlice';
 
 const Participants = () => {
+  const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
   const [filters, setFilters] = useState<FilterType>({
@@ -29,6 +32,7 @@ const Participants = () => {
     else if (path.includes('/counselors')) role = 'counselor';
     
     setFilters(prev => ({ ...prev, role }));
+    dispatch(setParticipants(MOCK_PARTICIPANTS))
   }, [location.pathname]);
 
   const filteredParticipants = useMemo(() => {
