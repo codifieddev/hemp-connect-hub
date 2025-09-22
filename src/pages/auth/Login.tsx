@@ -13,6 +13,8 @@ import { AppDispatch, RootState } from '@/redux/slice/user/store';
 import { login } from '@/redux/slice/user/AuthSlice';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
+import { fetchMentorData } from '@/redux/slice/participant/participantSlice';
+
 const Login = () => {
   // const { signIn, isAdmin, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -21,24 +23,41 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
- 
-  const { isAuthenticated, user} = useSelector((state: RootState) => state.auth);
+
+  const { isAuthenticated, user, userProfile } = useSelector((state: RootState) => state.auth);
 
   // Navigate once the auth context reflects a logged-in user
   // This avoids racing on stale isAdmin value right after signIn
   useEffect(() => {
-    if (isAuthenticated && user && user.id && user.role) {
+    if (isAuthenticated && 
+      user && user.id && 
+      user.role==="admin" ) {
 
-      navigate(user.role === 'admin' ? '/admin' : '/');
-      
+      navigate('/admin');
+
+    }else if (user && user.id 
+      && user.role==="mentor" && userProfile && userProfile.id) {
+      getMentorDetails(user.id, userProfile.id);
     }
-  }, [isAuthenticated, user,navigate]);
+  }, [isAuthenticated, user,userProfile,navigate]);
 
  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitting(true);
     setError(null);
     await dispatch(login({ email, password }));
+  };
+
+
+  const getMentorDetails=async(userId:string, profileId:number)=>{
+    try{
+      const response=await  dispatch(fetchMentorData(userId));
+
+     navigate(`/profile/${profileId}`);
+    }catch(error){
+      console.error("Error fetching mentor details:", error);
+      throw error;
+    }
   };
 
   return (

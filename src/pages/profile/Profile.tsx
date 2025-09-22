@@ -11,6 +11,7 @@ import { MOCK_PARTICIPANTS } from '@/data/mockData';
 import { Participant } from '@/types/participant';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/slice/user/store';
+import { useFormField } from '@/components/ui/form';
 
 interface TransformedParticipant {
   id: string;
@@ -35,7 +36,7 @@ const Profile = () => {
   const { id } = useParams<{ id: string }>();
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
 
-  const {participants} = useSelector((state: RootState) => state.participant)
+  const {participants, mentors} = useSelector((state: RootState) => state.participant)
   // const { user } = useAuth();
   const [participant, setParticipant] = useState<TransformedParticipant | null>(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
@@ -71,6 +72,65 @@ const Profile = () => {
       setParticipant(null);
     }
   }, [id, user, participants]);
+
+  useEffect(() => {
+    // Only run this block if mentors is not a MenteeApplication (i.e., is a mentor object)
+    // Type guard: mentors is a mentor object if it has 'person' and 'user_id' properties
+    const isMentorObject = (m: any): m is {
+      id: string;
+      person: any;
+      user_id: string;
+      company: any;
+      role: string;
+      address: any;
+      background: any;
+      narratives: any;
+      uploads: any;
+      phones: any;
+    } =>
+      m && typeof m === 'object' && 'person' in m && 'user_id' in m && 'company' in m ;
+
+    if (mentors && mentors.id && isAuthenticated && isMentorObject(mentors)) {
+      const mentor = mentors as ReturnType<typeof isMentorObject> extends true ? typeof mentors : any;
+      console.log("Mentor details in Profile page:", mentor);
+      const name = mentor.person?.firstName && mentor.person?.lastName
+        ? `${mentor.person.firstName} ${mentor.person.lastName}`
+        : '';
+      const title = mentor.person?.title || '';
+      const company = mentor.company?.name || '';
+      const role = 'mentor';
+      const industry = Array.isArray(mentor.company?.industry) ? mentor.company.industry : [];
+      const location = mentor.address?.business
+        ? `${mentor.address.business.city}, ${mentor.address.business.state}`
+        : 'Location not specified';
+      const yearsInBusiness = mentor.background?.yearsInLeadershipOrOwnership || 0;
+      const bio = mentor.narratives?.biggestSuccess || '';
+      const avatar = Array.isArray(mentor.uploads?.headshot) && typeof mentor.uploads.headshot[0] === 'string'
+        ? mentor.uploads.headshot[0]
+        : '';
+      const contact = {
+        email: mentor.person?.email || '',
+        phone: mentor.phones?.mobile || mentor.phones?.business || '',
+        linkedin: mentor.company?.website || '',
+        website: mentor.company?.website || '',
+      };
+      const transformedParticipant: TransformedParticipant = {
+        id: mentor.id,
+        name,
+        title,
+        company,
+        role,
+        industry,
+        location,
+        yearsInBusiness,
+        bio,
+        avatar,
+        contact,
+      };
+      setParticipant(transformedParticipant);
+      setIsOwnProfile(user?.id === mentor.user_id);
+    }
+  },[mentors, isAuthenticated])
 
   if (!participant) {
     return (

@@ -16,5 +16,11 @@ export const AuthService = {
     async signup(email: string, password: string, full_name?: string) {
        // authApi function for signup
        return await AuthAPI.signup(email, password, full_name);
+    },
+
+    // get mentor data
+      async getMentorsDetails(id: string) {
+       return await AuthAPI.getMentorsData(id);
     }
-};
+
+   }

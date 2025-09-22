@@ -55,7 +55,7 @@ export interface AuthSessionModel {
 
 export type UserStatus = "active" | "inactive" | "suspended" | "pending";
 export interface User {
-  id: string;
+  id: number;
   email: string;
   password?: string;
   profile: number;

@@ -11,10 +11,14 @@ import {
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
 import { cn } from '@/lib/utils';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/redux/slice/user/store';
+import { logout } from '@/redux/slice/user/AuthSlice';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const dispatch = useDispatch();
+  const {isAuthenticated, user} = useSelector((state: RootState) => state.auth);
   const navigationItems = [
     {
       title: 'Participants',
@@ -38,6 +42,9 @@ const Header = () => {
     }
   ];
 
+  const handleSignOut = () => {
+    dispatch(logout());
+  }
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
@@ -100,9 +107,13 @@ const Header = () => {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center space-x-3">
-          <Button variant="outline" asChild>
+         { !isAuthenticated?(<Button variant="outline" asChild>
             <Link to="/login">Sign In</Link>
-          </Button>
+          </Button>):(<Button variant="outline" asChild>
+            <Link to="/"
+            onClick={handleSignOut}
+            >Sign Out</Link>
+          </Button>)}
           <Button asChild className="btn-hero">
             <Link to="/apply/mentee">Get Started</Link>
           </Button>
