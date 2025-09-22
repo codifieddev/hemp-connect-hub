@@ -20,14 +20,16 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    // TODO: Replace with actual registration logic
-    setTimeout(() => {
+
+    try {
+      await AuthService.signup(email, password, '');
+      navigate('/login');
+    } catch (error) {
+      setError('Registration failed. Please try again.');
+    } finally {
       setLoading(false);
-      setError(null);
-      // Simulate navigation or success
-      alert('Registered!');
-    }, 1000);
-  };;
+    }
+  };
 
   return (
     <Layout>

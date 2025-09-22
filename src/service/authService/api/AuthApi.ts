@@ -36,6 +36,18 @@ export class AuthAPI {
 			options: full_name ? { data: { full_name } } : undefined,
 		});
 		if (error) throw error;
+
+		if(data && data.user  && data.user.id){
+			// Create user profile in 'user_profiles' table
+
+			const data1={
+				role:"mentee",
+				user_id:data.user.id,
+				full_name:full_name || email.split('@')[0],
+				
+			}
+			await this.createUserProfile(data1)
+		}
 		return data;
 	}
 
@@ -47,6 +59,16 @@ export class AuthAPI {
 			.eq('user_id', userId)
 			.single();
 		console.log("Get User Profile:", data, error);
+		if (error) throw error;
+		return data;
+	}
+
+	//insert userProfile based on id token
+	static async createUserProfile(profileData: { user_id: string; full_name?: string; role?: string }) {
+		const { data, error } = await supabase
+			.from('user_profiles')
+			.insert(profileData)
+			.single();
 		if (error) throw error;
 		return data;
 	}

@@ -152,44 +152,44 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
 
       {uploadingFiles.length > 0 && (
         <div className="space-y-2">
-          {uploadingFiles.map((fileItem) => (
-            <Card key={fileItem.id}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3 min-w-0 flex-1">
-                    <File className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium truncate">
-                        {fileItem.file.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {formatFileSize(fileItem.file.size)}
-                      </p>
+          {uploadingFiles.map(fileItem =>
+            (fileItem && fileItem.file) ? (
+              <Card key={fileItem.id}>
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3 min-w-0 flex-1">
+                      <File className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium truncate">
+                          {fileItem.file.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatFileSize(fileItem.file.size)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {fileItem.status === 'completed' && (
+                        <CheckCircle className="h-4 w-4 text-success" />
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeFile(fileItem.id)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    {fileItem.status === 'completed' && (
-                      <CheckCircle className="h-4 w-4 text-success" />
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeFile(fileItem.id)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-                
-                {fileItem.status === 'uploading' && (
-                  <div className="mt-2">
-                    <Progress value={fileItem.progress} className="h-1" />
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
+                  {fileItem.status === 'uploading' && (
+                    <div className="mt-2">
+                      <Progress value={fileItem.progress} className="h-1" />
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ) : null
+          )}
         </div>
       )}
 

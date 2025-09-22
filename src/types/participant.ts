@@ -15,6 +15,7 @@ export interface Participant {
   industries: string[];
   expertises: string[];
   businessAddress?: Address;
+  contact: Contact;
   homeAddress?: Address;
   availability?: boolean; // mentors
   isPublic: boolean;
@@ -52,4 +53,11 @@ export interface ParticipantResponse {
   limit: number;
   hasNext: boolean;
   hasPrev: boolean;
+}
+
+export interface Contact {
+  email: string;
+  phone?: string;
+  website?: string;
+  linkedin?: string;
 }

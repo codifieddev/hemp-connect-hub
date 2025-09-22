@@ -30,6 +30,7 @@ const Login = () => {
     if (isAuthenticated && user && user.id && user.role) {
 
       navigate(user.role === 'admin' ? '/admin' : '/');
+      
     }
   }, [isAuthenticated, user,navigate]);
 
