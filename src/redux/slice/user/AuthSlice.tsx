@@ -51,6 +51,8 @@ const authSlice = createSlice({
 		logout(state) {
 			state.user = null;
 			state.session = null;
+			state.isAuthenticated = false;
+			state.userProfile = null;
 		},
 	},	
 	extraReducers: (builder) => {
