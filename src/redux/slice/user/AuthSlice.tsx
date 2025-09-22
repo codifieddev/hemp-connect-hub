@@ -1,4 +1,4 @@
-import { LoginCredentials } from '@/model/AuthModel';
+import { LoginCredentials, User } from '@/model/AuthModel';
 import { AuthService } from '@/service/authService/authService';
 import { buildCreateSlice, createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
@@ -20,12 +20,14 @@ export interface SessionModel {
 interface AuthState {
 	user: AuthUserDetails | null;
 	session: SessionModel | null;
+	userProfile: User | null;
 	isAuthenticated: boolean;
 }
 
 const initialState: AuthState = {
 	user: null,
 	session: null,
+	userProfile: null,
 	isAuthenticated: false,
 };
 
@@ -56,6 +58,7 @@ const authSlice = createSlice({
 		.addCase(login.fulfilled, (state, action) => {
 			state.user = action.payload.user;
 			state.session = action.payload.session;
+			state.userProfile = action.payload.userProfile;
 			state.isAuthenticated = true;
 		})
 	   .addCase(login.rejected, (state, action) => {

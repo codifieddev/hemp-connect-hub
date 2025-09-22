@@ -44,6 +44,7 @@ interface Strengths {
 }
 
 export interface MenteeApplication {
+  id:string
   firstName: string;
   lastName: string;
   email: string;

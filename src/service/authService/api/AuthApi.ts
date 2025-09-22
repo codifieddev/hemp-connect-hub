@@ -21,6 +21,7 @@ export class AuthAPI {
 					role: profile?.role || undefined,
 				},
 				session: data.session,
+				userProfile: profile,
 			};
 		}
 			}
@@ -70,6 +71,18 @@ export class AuthAPI {
 			.insert(profileData)
 			.single();
 		if (error) throw error;
+		return data;
+	}
+
+	// get base on role getMentos
+	static async getMentorsData(id: string) {
+		console.log("Fetching mentor data for user ID:", id);
+		const { data, error } = await supabase
+			.from('mentors')
+			.select('*')
+			.eq('user_id', id);
+		if (error) throw error;
+		console.log("Mentor Data:", data);	
 		return data;
 	}
 }
