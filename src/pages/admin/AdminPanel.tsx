@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 // import { useAuth } from '@/context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/slice/user/store';
-
+import { MOCK_PARTICIPANTS, filterParticipants } from '@/data/mockData';
+import { userInfo } from 'os';
+import { setParticipants } from '@/redux/slice/participant/participantSlice';
 const tabs = [
   { key: 'users', label: 'Users' },
   { key: 'mentees', label: 'Mentees' },
@@ -35,6 +37,7 @@ function Table({
   if (loading) return <div className="p-6 text-sm text-gray-500">Loading…</div>;
   if (error) return <div className="p-6 text-sm text-red-600">{error}</div>;
   
+
   const renderRow = (row: UserRow | MenteeRow | MentorRow | FellowRow | CounselorRow | EventRow) => {
     switch (type) {
       case 'users':
@@ -158,82 +161,81 @@ export default function AdminPanel() {
   const [pending, setPending] = useState(false);
   const [err, setErr] = useState<string | undefined>();
   const { isAuthenticated, user} = useSelector((state: RootState) => state.auth);
+  const {participants} = useSelector((state: RootState) => state.participant);  
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (isAuthenticated && user?.role === 'admin') {
+         dispatch(setParticipants(MOCK_PARTICIPANTS))
+    }
+  },[isAuthenticated]);
 
-  // useEffect(() => {
-  //   const fetchRows = async () => {
-  //     if (!supabase) return;
-  //     setPending(true);
-  //     setErr(undefined);
+  useEffect(() => {
+    const fetchRows = async () => {
+      if (!supabase) return;
+      setPending(true);
+      setErr(undefined);
       
-  //     try {
-  //       let data: any[] = [];
-  //       let error: any = null;
+      try {
+        let data: any[] = [];
+        let error: any = null;
         
-  //       switch (active) {
-  //         case 'users':
-  //           const usersResult = await supabase
-  //             .from('users')
-  //             .select('id, email, name, role, created_at')
-  //             .order('created_at', { ascending: false });
-  //           data = usersResult.data || [];
-  //           error = usersResult.error;
-  //           break;
-  //         case 'mentees':
-  //           const menteesResult = await supabase
-  //             .from('mentees')
-  //             .select('id, user_id, bio, goals, created_at')
-  //             .order('created_at', { ascending: false });
-  //           data = menteesResult.data || [];
-  //           error = menteesResult.error;
-  //           break;
-  //         case 'mentors':
-  //           const mentorsResult = await supabase
-  //             .from('mentors')
-  //             .select('id, user_id, bio, expertise, availability, created_at')
-  //             .order('created_at', { ascending: false });
-  //           data = mentorsResult.data || [];
-  //           error = mentorsResult.error;
-  //           break;
-  //         case 'fellows':
-  //           const fellowsResult = await supabase
-  //             .from('fellows')
-  //             .select('id, user_id, bio, program, cohort, created_at')
-  //             .order('created_at', { ascending: false });
-  //           data = fellowsResult.data || [];
-  //           error = fellowsResult.error;
-  //           break;
-  //         case 'counselors':
-  //           const counselorsResult = await supabase
-  //             .from('counselors')
-  //             .select('id, user_id, bio, specialization, availability_hours, created_at')
-  //             .order('created_at', { ascending: false });
-  //           data = counselorsResult.data || [];
-  //           error = counselorsResult.error;
-  //           break;
-  //         case 'events':
-  //           const eventsResult = await supabase
-  //             .from('events')
-  //             .select('id, title, description, date, created_by, created_at')
-  //             .order('created_at', { ascending: false });
-  //           data = eventsResult.data || [];
-  //           error = eventsResult.error;
-  //           break;
-  //       }
+        switch (active) {
+          case 'users':
+            const usersResult = participants
+            // const usersResult = await supabase
+            //   .from('users')
+            //   .select('id, email, name, role, created_at')
+            //   .order('created_at', { ascending: false });
+            data = usersResult || [];
+            // error = usersResult.error;
+            break;
+          case 'mentees':
+            const menteesResult = participants.filter(p => p.role === 'mentee')
+
+            data = menteesResult || [];
+            // error = menteesResult.error;
+            break;
+          case 'mentors':
+            const mentorsResult = participants.filter(p => p.role === 'mentor')
+            data = mentorsResult || [];
+            // error = mentorsResult.error;
+            break;
+             
+          case 'fellows':
+            const fellowsResult = participants.filter(p => p.role === 'fellow')
+            data = fellowsResult || [];
+            // error = fellowsResult.error;
+            break;
+            break;
+          case 'counselors':
+            const counselorsResult = participants.filter(p => p.role === 'counselor')
+            data = counselorsResult || [];
+            // error = counselorsResult.error;
+            break;
+          case 'events':
+            const eventsResult = await supabase
+              .from('events')
+              .select('id, title, description, date, created_by, created_at')
+              .order('created_at', { ascending: false });
+            data = eventsResult.data || [];
+            error = eventsResult.error;
+            break;
+        }
         
-  //       if (error) {
-  //         setErr(error.message);
-  //       } else {
-  //         setRows(data);
-  //       }
-  //     } catch (e: any) {
-  //       setErr(e?.message || 'Unknown error occurred');
-  //     } finally {
-  //       setPending(false);
-  //     }
-  //   };
+        if (error) {
+          setErr(error.message);
+        } else {
+          setRows(data);
+        }
+      } catch (e: any) {
+        setErr(e?.message || 'Unknown error occurred');
+      } finally {
+        setPending(false);
+      }
+    };
     
-  //   fetchRows();
-  // }, [active]);
+    fetchRows();
+  }, [participants, active]);
 
   // if (loading) return null;
   // if (!user) return <Navigate to="/login" replace />;

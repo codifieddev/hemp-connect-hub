@@ -14,7 +14,7 @@ import { MentorApplication } from "./pages/apply/MentorApplication";
 import NotFound from "./pages/NotFound";
 import AdminPanel from "./pages/admin/AdminPanel";
 import Profile from "./pages/profile/Profile";
-
+import { MOCK_PARTICIPANTS, filterParticipants } from '@/data/mockData';
 const queryClient = new QueryClient();
 
 
